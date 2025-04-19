@@ -4,13 +4,11 @@ from routes.user import router as UserRouter
 from config.database import Database
 
 
-app = FastAPI()
-
 origins = [
     "http://localhost",
     "http://localhost:3000"
 ]
-
+app = FastAPI()
 app.add_middleware(
     CORSMiddleware, allow_origins=origins,
     allow_credentials=True, allow_methods=["*"], allow_headers=["*"]

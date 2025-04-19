@@ -26,5 +26,4 @@ class UserModel(BaseModelUpdated):
     userCredentials: Optional[UserCredentialsModel] = None
     username: str
     password: str
-    previousPassword: Optional[str] = None
     bio: Optional[str] = None

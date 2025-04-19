@@ -85,3 +85,36 @@ async def readUser(userID: str) -> Response | dict:
         "message": "Successful retrieving",
         "data": userData
     }
+
+
+@router.put("/{userToken}", response_model=None)
+async def updateUser(userToken: str, userData: UserModel) -> Response | dict:
+    userData = userData.model_dump()
+    userCredentials = userData["userCredentials"]
+    if userToken != userCredentials["userToken"]:
+        raise HTTPException(
+            status_code=403, detail="User tokens do not match"
+        )
+    findUser = Database.Users.find_one(userCredentials)
+    if findUser is None:
+        raise HTTPException(
+            status_code=404, detail="No such user"
+        )
+    if Database.Users.find_one({"userToken": {"$ne": userToken}, "username": userData["username"]}) is not None:
+        raise HTTPException(
+            status_code=403, detail="Username is already taken"
+        )
+    try:
+        del userData["userCredentials"]
+        userData = {
+            **userCredentials, **userData
+        }
+        Database.Users.find_one_and_replace(userCredentials, userData)
+        return {
+            "message": "Successful update",
+            "data": userCredentials
+        }
+    except:
+        raise HTTPException(
+            status_code=500, detail="Could not update user"
+        )
