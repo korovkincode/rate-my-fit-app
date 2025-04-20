@@ -1,5 +1,3 @@
-import sys
-sys.path.append("../models")
 from fastapi import APIRouter, HTTPException, Response
 from models.user import UserAuthModel, UserCredentialsModel, UserModel
 from config.database import Database
@@ -46,9 +44,7 @@ async def createUser(userData: UserModel) -> Response | dict:
         })
         return {
             "message": "Successful signup",
-            "data": {
-                **userCredentials
-            }
+            "data": userCredentials
         }
     except:
         raise HTTPException(
@@ -95,6 +91,7 @@ async def updateUser(userToken: str, userData: UserModel) -> Response | dict:
         raise HTTPException(
             status_code=403, detail="User tokens do not match"
         )
+    
     findUser = Database.Users.find_one(userCredentials)
     if findUser is None:
         raise HTTPException(
@@ -104,6 +101,7 @@ async def updateUser(userToken: str, userData: UserModel) -> Response | dict:
         raise HTTPException(
             status_code=403, detail="Username is already taken"
         )
+    
     try:
         del userData["userCredentials"]
         userData = {
