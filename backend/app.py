@@ -38,5 +38,4 @@ app.include_router(FitRouter, tags=["Fit"], prefix="/fit")
 '''
 ToDos:
 Refactor routers (implement general abstract class)
-Implement removing old pics
 '''

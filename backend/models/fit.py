@@ -13,7 +13,7 @@ class FitModel(AbstractModel):
     description: Optional[str] = None
 
 
-    @model_validator(mode='before')
+    @model_validator(mode="before")
     @classmethod
     def validateToJSON(cls, value):
         if isinstance(value, str):

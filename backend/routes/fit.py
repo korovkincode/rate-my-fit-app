@@ -5,6 +5,7 @@ import uuid
 import os
 import utils
 
+
 router = APIRouter()
 
 
@@ -13,14 +14,14 @@ async def addFit(fitData: FitModel = Body(...), pics: list[UploadFile] = File(..
     fitData = fitData.model_dump()
     if Database.Users.find_one(fitData["userCredentials"]) is None:
         raise HTTPException(
-            status_code=403, detail="No such user"
+            status_code=404, detail="No such user"
         )
     
     fitID = uuid.uuid4().hex
     fitData["fitID"] = fitID
     fitData["authorToken"] = fitData["userCredentials"]["userToken"]
     del fitData["userCredentials"]
-    fitData["picnames"] = utils.collectPics(pics)
+    fitData["picnames"] = utils.collectPics(pics, {"flag": 0})
     
     try:
         Database.Fits.insert_one(fitData)
@@ -36,11 +37,11 @@ async def addFit(fitData: FitModel = Body(...), pics: list[UploadFile] = File(..
 
 
 @router.get("/{fitID}", response_model=None)
-async def readFit(fitID: str) -> HTTPException | Response:
+async def getFit(fitID: str) -> HTTPException | Response:
     fitData = Database.Fits.find_one({"fitID": fitID}, {"_id": 0})
     if fitData is None:
         raise HTTPException(
-            status_code=403, detail="No such fit"
+            status_code=404, detail="No such fit"
         )
     
     return {
@@ -49,9 +50,8 @@ async def readFit(fitID: str) -> HTTPException | Response:
     }
     
 
-
 @router.put("/{fitID}", response_model=None)
-async def updateFit(fitID: str, fitData: FitModel = Body(...), pics: list[UploadFile] = File(...)) -> HTTPException | Response:
+async def updateFit(fitID: str, appendPics: bool = False, fitData: FitModel = Body(...), pics: list[UploadFile] = File(...)) -> HTTPException | Response:
     fitData = fitData.model_dump()
     if fitID != fitData["fitID"]:
         raise HTTPException(
@@ -59,7 +59,7 @@ async def updateFit(fitID: str, fitData: FitModel = Body(...), pics: list[Upload
         )
     if Database.Users.find_one(fitData["userCredentials"]) is None:
         raise HTTPException(
-            status_code=403, detail="No such user"
+            status_code=404, detail="No such user"
         )
     findFit = Database.Fits.find_one({"fitID": fitID})
     if findFit["authorToken"] != fitData["userCredentials"]["userToken"]:
@@ -67,9 +67,12 @@ async def updateFit(fitID: str, fitData: FitModel = Body(...), pics: list[Upload
             status_code=403, detail="User tokens do not match"
         )
 
-    fitData["picnames"] = utils.collectPics(pics)
     fitData["authorToken"] = fitData["userCredentials"]["userToken"]
     del fitData["userCredentials"]
+    picStatus = {
+        "flag": appendPics, "picnames": findFit["picnames"]
+    }
+    fitData["picnames"] = utils.collectPics(pics, picStatus)
     
     try:
         Database.Fits.find_one_and_replace({"fitID": fitID}, fitData)
@@ -80,5 +83,25 @@ async def updateFit(fitID: str, fitData: FitModel = Body(...), pics: list[Upload
         }
     except:
         raise HTTPException(
-            status_code=500, detail="Could not add fit" 
+            status_code=500, detail="Could not update fit" 
         )
+
+
+@router.get("/by/{userID}", response_model=None)
+async def getUserFits(userID: str) -> HTTPException | Response:
+    if userID.startswith("@"):
+        userData = Database.Users.find_one({"username": userID[1:]})
+        if userData is None:
+            raise HTTPException(
+                status_code=404, detail="No such user"
+            )
+        authorToken = userData["userToken"]
+    else:
+        authorToken = userID
+    
+    userFits = Database.Fits.find({"authorToken": authorToken}, {"_id": 0})
+    userFitsList = [fit for fit in userFits]
+    return {
+        "message": "Successful retrieving",
+        "data": userFitsList
+    }

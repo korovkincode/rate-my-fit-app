@@ -1,5 +1,5 @@
-from fastapi import APIRouter, HTTPException, Response
-from models.user import UserAuthModel, UserCredentialsModel, UserModel
+from fastapi import APIRouter, HTTPException, Response, Header
+from models.user import UserAuthModel, UserModel
 from config.database import Database
 import uuid
 
@@ -25,7 +25,7 @@ async def authUser(userAuth: UserAuthModel) -> Response | dict:
 
 
 @router.post("/signup", response_model=None)
-async def createUser(userData: UserModel) -> Response | dict: 
+async def addUser(userData: UserModel) -> Response | dict: 
     userData = userData.model_dump()
     if Database.Users.find_one({"username": userData["username"]}):
         raise HTTPException(
@@ -53,7 +53,7 @@ async def createUser(userData: UserModel) -> Response | dict:
 
 
 @router.get("/{userID}", response_model=None)
-async def readUser(userID: str) -> Response | dict:
+async def getUser(userID: str, secretToken: str | None = Header(default=None)) -> Response | dict:
     queryOptions = hiddenData = {}
     if userID.startswith("@"):
         #Retrieving public info
@@ -65,6 +65,10 @@ async def readUser(userID: str) -> Response | dict:
             "secretToken": 0,
             "password": 0
         }
+    elif secretToken is None:
+        raise HTTPException(
+            status_code=403, detail="Secret token was not provided"
+        )
     else:
         #Retrieving full info
         queryOptions = {
@@ -77,6 +81,11 @@ async def readUser(userID: str) -> Response | dict:
         raise HTTPException(
             status_code=404, detail="No such user"
         )
+    if "userToken" in queryOptions and secretToken != userData["secretToken"]:
+        raise HTTPException(
+            status_code=403, detail="Wrong secret token"
+        )
+
     return {
         "message": "Successful retrieving",
         "data": userData
