@@ -1,6 +1,6 @@
 from .abstract import AbstractModel
 from .user import UserCredentialsModel
-from typing import Optional, List
+from typing import Optional
 from pydantic import model_validator
 import json
 

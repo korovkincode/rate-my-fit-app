@@ -8,7 +8,7 @@ router = APIRouter()
 
 
 @router.post("/auth", response_model=None)
-async def authUser(userAuth: UserAuthModel) -> Response | dict:
+async def authUser(userAuth: UserAuthModel) -> HTTPException | dict:
     userAuth = userAuth.model_dump()
     userData = Database.Users.find_one(userAuth)
     if userData is None:
@@ -24,8 +24,8 @@ async def authUser(userAuth: UserAuthModel) -> Response | dict:
     }
 
 
-@router.post("/signup", response_model=None)
-async def addUser(userData: UserModel) -> Response | dict: 
+@router.post("/add", response_model=None)
+async def addUser(userData: UserModel) -> HTTPException | dict: 
     userData = userData.model_dump()
     if Database.Users.find_one({"username": userData["username"]}):
         raise HTTPException(
@@ -48,12 +48,12 @@ async def addUser(userData: UserModel) -> Response | dict:
         }
     except:
         raise HTTPException(
-            status_code=500, detail="Could not signup user"
+            status_code=500, detail="Could not signup a user"
         )
 
 
 @router.get("/{userID}", response_model=None)
-async def getUser(userID: str, secretToken: str | None = Header(default=None)) -> Response | dict:
+async def getUser(userID: str, secretToken: str | None = Header(default=None)) -> HTTPException | dict:
     queryOptions = hiddenData = {}
     if userID.startswith("@"):
         #Retrieving public info
@@ -93,7 +93,7 @@ async def getUser(userID: str, secretToken: str | None = Header(default=None)) -
 
 
 @router.put("/{userToken}", response_model=None)
-async def updateUser(userToken: str, userData: UserModel) -> Response | dict:
+async def updateUser(userToken: str, userData: UserModel) -> HTTPException | dict:
     userData = userData.model_dump()
     userCredentials = userData["userCredentials"]
     if userToken != userCredentials["userToken"]:
@@ -123,5 +123,5 @@ async def updateUser(userToken: str, userData: UserModel) -> Response | dict:
         }
     except:
         raise HTTPException(
-            status_code=500, detail="Could not update user"
+            status_code=500, detail="Could not update a user"
         )

@@ -4,6 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from config.database import Database
 from routes.user import router as UserRouter
 from routes.fit import router as FitRouter
+from routes.review import router as ReviewRouter
 
 
 app = FastAPI()
@@ -33,6 +34,7 @@ async def root() -> dict:
 
 app.include_router(UserRouter, tags=["User"], prefix="/user")
 app.include_router(FitRouter, tags=["Fit"], prefix="/fit")
+app.include_router(ReviewRouter, tags=["Review"], prefix="/review")
 
 
 '''

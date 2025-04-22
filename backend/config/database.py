@@ -14,3 +14,4 @@ class Database:
         cls.DB = cls.Client.RateMyFit
         cls.Users = cls.DB.Users
         cls.Fits = cls.DB.Fits
+        cls.Reviews = cls.DB.Reviews

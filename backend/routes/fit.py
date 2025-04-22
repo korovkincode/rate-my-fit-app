@@ -2,7 +2,6 @@ from fastapi import APIRouter, HTTPException, Response, Body, UploadFile, File
 from models.fit import FitModel
 from config.database import Database
 import uuid
-import os
 import utils
 
 
@@ -10,7 +9,7 @@ router = APIRouter()
 
 
 @router.post("/add", response_model=None)
-async def addFit(fitData: FitModel = Body(...), pics: list[UploadFile] = File(...)) -> HTTPException | Response:
+async def addFit(fitData: FitModel = Body(...), pics: list[UploadFile] = File(...)) -> HTTPException | dict:
     fitData = fitData.model_dump()
     if Database.Users.find_one(fitData["userCredentials"]) is None:
         raise HTTPException(
@@ -32,12 +31,12 @@ async def addFit(fitData: FitModel = Body(...), pics: list[UploadFile] = File(..
         }
     except:
         raise HTTPException(
-            status_code=500, detail="Could not add fit" 
+            status_code=500, detail="Could not add a fit"
         )
 
 
 @router.get("/{fitID}", response_model=None)
-async def getFit(fitID: str) -> HTTPException | Response:
+async def getFit(fitID: str) -> HTTPException | dict:
     fitData = Database.Fits.find_one({"fitID": fitID}, {"_id": 0})
     if fitData is None:
         raise HTTPException(
@@ -51,7 +50,7 @@ async def getFit(fitID: str) -> HTTPException | Response:
     
 
 @router.put("/{fitID}", response_model=None)
-async def updateFit(fitID: str, appendPics: bool = False, fitData: FitModel = Body(...), pics: list[UploadFile] = File(...)) -> HTTPException | Response:
+async def updateFit(fitID: str, appendPics: bool = False, fitData: FitModel = Body(...), pics: list[UploadFile] = File(...)) -> HTTPException | dict:
     fitData = fitData.model_dump()
     if fitID != fitData["fitID"]:
         raise HTTPException(
@@ -83,25 +82,25 @@ async def updateFit(fitID: str, appendPics: bool = False, fitData: FitModel = Bo
         }
     except:
         raise HTTPException(
-            status_code=500, detail="Could not update fit" 
+            status_code=500, detail="Could not update a fit" 
         )
 
 
 @router.get("/by/{userID}", response_model=None)
-async def getUserFits(userID: str) -> HTTPException | Response:
+async def getUserFits(userID: str) -> HTTPException | dict:
     if userID.startswith("@"):
-        userData = Database.Users.find_one({"username": userID[1:]})
-        if userData is None:
-            raise HTTPException(
-                status_code=404, detail="No such user"
-            )
-        authorToken = userData["userToken"]
+        authorToken = utils.getTwinID(userID)
     else:
         authorToken = userID
+
+    if Database.Users.find_one({"userToken": authorToken}) is None:
+        raise HTTPException(
+            status_code=404, detail="No such user"
+        )
     
-    userFits = Database.Fits.find({"authorToken": authorToken}, {"_id": 0})
-    userFitsList = [fit for fit in userFits]
     return {
         "message": "Successful retrieving",
-        "data": userFitsList
+        "data": utils.findByRelation(
+            Database.Fits, {"authorToken": authorToken}, {"_id": 0}
+        )
     }
