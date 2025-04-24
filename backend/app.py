@@ -21,10 +21,15 @@ app.add_middleware(
     allow_credentials=True, allow_methods=["*"], allow_headers=["*"]
 )
 
+UPDATE_ITEMS = False
+
 
 @app.on_event("startup")
 async def startDB():
     Database.connect()
+
+    if UPDATE_ITEMS:
+        Database.updateItems()
 
 
 @app.get("/", tags=["Root"])
@@ -40,4 +45,11 @@ app.include_router(ReviewRouter, tags=["Review"], prefix="/review")
 '''
 ToDos:
 Refactor routers (implement general abstract class)
+
+Sample fits:
+https://whatsonthestar.com/outfit/ken-carson-41670
+https://whatsonthestar.com/outfit/destroy-lonely-42709
+https://whatsonthestar.com/outfit/playboi-carti-42376
+https://whatsonthestar.com/outfit/playboi-carti-23879
+https://whatsonthestar.com/outfit/ken-carson-34702
 '''
