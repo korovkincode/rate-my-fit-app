@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Response, Header
+from fastapi import APIRouter, HTTPException, Header
 from models.user import UserAuthModel, UserModel
 from config.database import Database
 import uuid
@@ -123,5 +123,5 @@ async def updateUser(userToken: str, userData: UserModel) -> HTTPException | dic
         }
     except:
         raise HTTPException(
-            status_code=500, detail="Could not update a user"
+            status_code=500, detail="Could not update the user"
         )

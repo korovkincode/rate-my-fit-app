@@ -40,6 +40,14 @@ def getTwinID(userID: str) -> HTTPException | str:
     return userData[twinID]
 
 
-def findByRelation(collection, filter: dict, hide: dict) -> list:
-    resultsCursor = collection.find(filter, hide)
-    return [result for result in resultsCursor]
+def findByRelation(collection, filter: dict, hide: dict, start: int = None, limit: int = None) -> list:
+    resultStart = 0
+    if start is not None:
+        resultStart = start
+
+    queryParams = {}
+    if limit is not None:
+        queryParams["limit"] = resultStart + limit
+
+    resultsCursor = collection.find(filter, hide, **queryParams)
+    return [result for result in resultsCursor][resultStart:]

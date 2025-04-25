@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Response, Body, UploadFile, File
+from fastapi import APIRouter, HTTPException, Body, UploadFile, File
 from models.fit import FitModel
 from config.database import Database
 import uuid
@@ -61,6 +61,10 @@ async def updateFit(fitID: str, appendPics: bool = False, fitData: FitModel = Bo
             status_code=404, detail="No such user"
         )
     findFit = Database.Fits.find_one({"fitID": fitID})
+    if findFit is None:
+        raise HTTPException(
+            status_code=404, detail="No such fit"
+        )
     if findFit["authorToken"] != fitData["userCredentials"]["userToken"]:
         raise HTTPException(
             status_code=403, detail="User tokens do not match"
@@ -82,7 +86,7 @@ async def updateFit(fitID: str, appendPics: bool = False, fitData: FitModel = Bo
         }
     except:
         raise HTTPException(
-            status_code=500, detail="Could not update a fit" 
+            status_code=500, detail="Could not update the fit" 
         )
 
 

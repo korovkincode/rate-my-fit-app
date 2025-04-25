@@ -19,7 +19,7 @@ for filename in ITEMS_FILES:
     for itemData in fileData[brandName]:
         itemData["price"] = int(itemData["price"] + 0.5) #To round prices
         generalData.append({
-            "ID": uuid.uuid4().hex,
+            "itemID": uuid.uuid4().hex,
             "brand": brandName.replace("-", " "),
             **itemData
         })

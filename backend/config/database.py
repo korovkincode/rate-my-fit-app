@@ -21,9 +21,10 @@ class Database:
     
 
     @classmethod
-    def updateItems(cls):
+    def updateItems(cls, replace: bool = False):
         with open(os.path.join("collectors", "all-items.json"), encoding="utf-8") as allItemsFile:
             allItemsData = json.load(allItemsFile)
         
-        cls.Items.delete_many({})
+        if replace:
+            cls.Items.delete_many({})
         cls.Items.insert_many(allItemsData)

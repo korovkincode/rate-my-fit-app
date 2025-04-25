@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Response
+from fastapi import APIRouter, HTTPException
 from models.review import ReviewModel
 from config.database import Database
 import uuid
