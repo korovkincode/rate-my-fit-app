@@ -15,7 +15,11 @@ async def addFit(fitData: FitModel = Body(...), pics: list[UploadFile] = File(..
         raise HTTPException(
             status_code=404, detail="No such user"
         )
-    
+    if "itemsID" in fitData and not utils.checkItems(fitData["itemsID"]):
+        raise HTTPException(
+            status_code=403, detail="Error caused by items list"
+        )
+
     fitID = uuid.uuid4().hex
     fitData["fitID"] = fitID
     fitData["authorToken"] = fitData["userCredentials"]["userToken"]
@@ -56,14 +60,19 @@ async def updateFit(fitID: str, appendPics: bool = False, fitData: FitModel = Bo
         raise HTTPException(
             status_code=403, detail="Fit IDs do not match"
         )
-    if Database.Users.find_one(fitData["userCredentials"]) is None:
+    if "itemsID" in fitData and not utils.checkItems(fitData["itemsID"]):
         raise HTTPException(
-            status_code=404, detail="No such user"
+            status_code=403, detail="Error caused by items list"
         )
     findFit = Database.Fits.find_one({"fitID": fitID})
     if findFit is None:
         raise HTTPException(
             status_code=404, detail="No such fit"
+        )
+    
+    if Database.Users.find_one(fitData["userCredentials"]) is None:
+        raise HTTPException(
+            status_code=404, detail="No such user"
         )
     if findFit["authorToken"] != fitData["userCredentials"]["userToken"]:
         raise HTTPException(

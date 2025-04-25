@@ -1,6 +1,6 @@
 from .abstract import AbstractModel
 from .user import UserCredentialsModel
-from typing import Optional
+from typing import Optional, List
 from pydantic import model_validator
 import json
 
@@ -11,7 +11,8 @@ class FitModel(AbstractModel):
     title: str
     date: str
     description: Optional[str] = None
-
+    itemsID: Optional[List[str]] = None
+    
 
     @model_validator(mode="before")
     @classmethod

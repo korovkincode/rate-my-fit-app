@@ -11,6 +11,10 @@ router = APIRouter()
 @router.post("/add", response_model=None)
 async def addReview(reviewData: ReviewModel) -> HTTPException | dict:
     reviewData = reviewData.model_dump()
+    if not 1 <= reviewData["grade"] <= 5:
+        raise HTTPException(
+            status_code=403, detail="Grade should be an integer from 1 to 5"
+        )
     if Database.Users.find_one(reviewData["userCredentials"]) is None:
         raise HTTPException(
             status_code=404, detail="No such user"
@@ -18,10 +22,6 @@ async def addReview(reviewData: ReviewModel) -> HTTPException | dict:
     if Database.Fits.find_one({"fitID": reviewData["fitID"]}) is None:
         raise HTTPException(
             status_code=404, detail="No such fit"
-        )
-    if not 1 <= reviewData["grade"] <= 5:
-        raise HTTPException(
-            status_code=403, detail="Grade should be an integer from 1 to 5"
         )
     
     reviewID = uuid.uuid4().hex

@@ -51,3 +51,14 @@ def findByRelation(collection, filter: dict, hide: dict, start: int = None, limi
 
     resultsCursor = collection.find(filter, hide, **queryParams)
     return [result for result in resultsCursor][resultStart:]
+
+
+def checkItems(itemsID: List[str]) -> bool:
+    if len(itemsID) > len(set(itemsID)):
+        return False
+    
+    for itemID in itemsID:
+        if Database.Items.find_one({"itemID": itemID}) is None:
+            return False
+        
+    return True

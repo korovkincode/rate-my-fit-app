@@ -49,12 +49,12 @@ ToDos:
 Refactor routers (implement general abstract class)
 
 Sample fits:
-https://whatsonthestar.com/outfit/ken-carson-41670
-https://whatsonthestar.com/outfit/destroy-lonely-42709
-https://whatsonthestar.com/outfit/playboi-carti-42376
+https://whatsonthestar.com/outfit/ken-carson-41670 ✔️
+https://whatsonthestar.com/outfit/destroy-lonely-42709 ✔️
+https://whatsonthestar.com/outfit/playboi-carti-42376 ✔️
 https://whatsonthestar.com/outfit/playboi-carti-23879
 https://whatsonthestar.com/outfit/ken-carson-34702
 
 Items to add:
-https://jayycerrcustoms.store/products/fur-backpack
+https://jayycerrcustoms.store/products/fur-backpack ✔️
 '''

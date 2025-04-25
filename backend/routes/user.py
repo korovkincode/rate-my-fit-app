@@ -15,6 +15,7 @@ async def authUser(userAuth: UserAuthModel) -> HTTPException | dict:
         raise HTTPException(
             status_code=404, detail="No such user"
         )
+    
     return {
         "message": "Successful auth",
         "data": {
