@@ -49,5 +49,5 @@ collectedData = {BRAND_NAME: []}
 for page in range(0, PAGE_NUM + 1):
     parsePage(page)
 
-with open(f"stylight-{BRAND_NAME}.json", "w") as f:
+with open(f"stylight-{BRAND_NAME}.json", "w", encoding="utf-8") as f:
     json.dump(collectedData, f, indent=4)

@@ -1,8 +1,9 @@
 import json
 import uuid
+import math
 
 
-WORK_FILES = [
+ITEMS_FILES = [
     "frasers-Balenciaga.json", "stylight-Balenciaga.json", "stylight-Rick-Owens.json",
     "stylight-Vetements.json", "stylight-Timberland.json", "stylight-Maison-Margiela.json"
 ]
@@ -10,12 +11,13 @@ WORK_FILES = [
 generalData = []
 
 
-for filename in WORK_FILES:
+for filename in ITEMS_FILES:
     with open(filename, encoding="utf-8") as file:
         fileData = json.load(file)
     brandName = [*fileData][0]
-    
+
     for itemData in fileData[brandName]:
+        itemData["price"] = int(itemData["price"] + 0.5) #To round prices
         generalData.append({
             "ID": uuid.uuid4().hex,
             "brand": brandName.replace("-", " "),
@@ -23,5 +25,11 @@ for filename in WORK_FILES:
         })
 
 
-with open("all-items.json", "w") as generalFile:
+with open("all-items.json", "w", encoding="utf-8") as generalFile:
     json.dump(generalData, generalFile, indent=4)
+
+
+'''
+Item structure:
+ID, brand, name, img, price (all in USD), *category (Optional)
+'''

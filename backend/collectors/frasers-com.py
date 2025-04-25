@@ -39,5 +39,5 @@ for page in range(1, PAGE_NUM + 1):
     parsePage(page)
 
 
-with open(f"frasers-{BRAND_NAME}.json", "w") as f:
+with open(f"frasers-{BRAND_NAME}.json", "w", encoding="utf-8") as f:
     json.dump(collectedData, f, indent=4)
