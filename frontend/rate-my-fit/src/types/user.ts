@@ -3,14 +3,13 @@ export type UserCredentials = {
     secretToken: string
 };
 
-export type FormData = {
+export type Form = {
     username: string,
     password: string,
-    previousPassword: string | null,
     bio: string | null
 };
 
-export type FormType = "signup" | "login" | "update";
+export type FormType = 'signup' | 'login' | 'update';
 
 export type FormStatus = {
     status: string,
