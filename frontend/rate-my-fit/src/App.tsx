@@ -1,35 +1,30 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import './App.css';
+import { BrowserRouter } from 'react-router-dom';
+import Navbar from './components/Navbar';
+import Router from './router';
+import { useEffect, useState } from 'react';
+import { UserCredentials } from './types/user';
+import { AuthContext } from './context';
 
-function App() {
-  const [count, setCount] = useState(0)
+const App = () => {
+	const [userCredentials, setUserCredentials] = useState<UserCredentials>({
+		userToken: localStorage.getItem('userToken') || '',
+		secretToken: localStorage.getItem('secretToken') || '',
+	});
 
-  return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+	useEffect(() => {
+		localStorage.setItem('userToken', userCredentials.userToken);
+		localStorage.setItem('secretToken', userCredentials.secretToken);
+	}, [userCredentials, setUserCredentials]);
 
-export default App
+	return (
+		<AuthContext.Provider value={[userCredentials, setUserCredentials]}>
+			<BrowserRouter>
+				<Navbar />
+				<Router />
+			</BrowserRouter>
+		</AuthContext.Provider>
+	);
+};
+
+export default App;
