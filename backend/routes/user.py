@@ -1,7 +1,9 @@
-from fastapi import APIRouter, HTTPException, Header
-from models.user import UserAuthModel, UserModel
+from fastapi import APIRouter, HTTPException, Header, Body, UploadFile, File
+from models.user import UserAuthModel, UserModel, UserCredentialsModel
 from config.database import Database
 import uuid
+import utils
+import os
 
 
 router = APIRouter()
@@ -126,3 +128,26 @@ async def updateUser(userToken: str, userData: UserModel) -> HTTPException | dic
         raise HTTPException(
             status_code=500, detail="Could not update the user"
         )
+    
+
+@router.post("/{userToken}/pfp", response_model=None)
+async def setUserPfp(userToken: str, userCredentials: UserCredentialsModel = Body(...), pfp: UploadFile = File(...)) -> HTTPException | dict:
+    userCredentials = userCredentials.model_dump()
+    if userToken != userCredentials["userToken"]:
+        raise HTTPException(
+            status_code=403, detail="User tokens do not match"
+        )
+    
+    findUser = Database.Users.find_one(userCredentials)
+    if findUser is None:
+        raise HTTPException(
+            status_code=404, detail="No such user"
+        )
+    
+    picname = userToken + utils.getFileExtension(pfp.filename)
+    with open(os.path.join("pfp", picname), "wb") as f:
+        f.write(pfp.file.read())
+    
+    return {
+        "message": "Successful pfp setting"
+    }
