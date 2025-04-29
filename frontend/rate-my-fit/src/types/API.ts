@@ -2,7 +2,7 @@ export type RequestParams = {
     method: 'GET' | 'POST' | 'PUT' | 'DELETE',
     path: string,
     headers: {
-        [key: string]: string
+        [key: string]: any
     } | null,
     body: {
         [key: string]: any

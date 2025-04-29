@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { Box, Grid, Typography, TextField, Button } from '@mui/material';
 import { FormType, Form, FormStatus } from '../types/user';
 import { signupUser, loginUser } from '../API/user';
-import { useCredentials } from '../hooks/useCredentials';
+import { AuthContext } from '../context';
+import secureLocalStorage from 'react-secure-storage';
 
 const UserForm = ({ actionType }: { actionType: FormType}) => {
     const [userData, setUserData] = useState<Form>({
@@ -10,7 +11,11 @@ const UserForm = ({ actionType }: { actionType: FormType}) => {
     });
 	const [formStatus, setFormStatus] = useState<FormStatus>({status: '', description: ''});
 
-    const [userCredentials, setUserCredentials] = useCredentials();
+    const authContext = useContext(AuthContext);
+    if (!authContext) {
+        throw new Error('AuthContext is not defined');
+    }
+    const [userCredentials, setUserCredentials] = authContext;
 
     const handleForm = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -37,6 +42,7 @@ const UserForm = ({ actionType }: { actionType: FormType}) => {
 
         setFormStatus({status: 'success', description: formResponse.message});
         setUserCredentials(formResponse.data);
+        secureLocalStorage.setItem('username', userData.username);
     };
 
     return (

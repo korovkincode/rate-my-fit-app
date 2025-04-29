@@ -1,17 +1,18 @@
-import { useState, MouseEvent } from 'react';
-import AppBar from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
-import IconButton from '@mui/material/IconButton';
+import { useState, MouseEvent, useContext } from 'react';
+import { AppBar, Box, Toolbar, Typography, IconButton, Menu, MenuItem } from '@mui/material';
 import AccountCircle from '@mui/icons-material/AccountCircle';
-import MenuItem from '@mui/material/MenuItem';
-import Menu from '@mui/material/Menu';
-import { useCredentials } from '../hooks/useCredentials';
-
+import { Link as LinkDOM } from 'react-router-dom';
+import { AuthContext } from '../context';
+import secureLocalStorage from 'react-secure-storage';
 
 const Navbar = () => {
-    const [userCredentials, setUserCredentials] = useCredentials();
+    const authContext = useContext(AuthContext);
+    if (!authContext) {
+        throw new Error('AuthContext is not defined');
+    }
+    const [userCredentials, setUserCredentials] = authContext;
+    const username = secureLocalStorage.getItem('username');
+
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
     const handleMenu = (event: MouseEvent<HTMLElement>) => {
@@ -21,6 +22,16 @@ const Navbar = () => {
     const handleClose = () => {
         setAnchorEl(null);
     };
+
+    const handleLogout = () => {
+        setUserCredentials({
+            'userToken': '', 'secretToken': ''
+        });
+        if ('username' in secureLocalStorage) {
+            delete secureLocalStorage['username'];
+        }
+        handleClose();
+    }
 
     return (
         <Box sx={{ flexGrow: 1 }}>
@@ -41,7 +52,7 @@ const Navbar = () => {
                 </IconButton>
                 <Menu
                     id="menu-appbar"
-                    sx={{ mt: '20px' }}
+                    sx={{ mt: '30px' }}
                     anchorEl={anchorEl}
                     anchorOrigin={{
                         vertical: 'top',
@@ -58,10 +69,29 @@ const Navbar = () => {
                     {userCredentials.userToken !== ''
                         ?
                         <> 
-                            <MenuItem onClick={handleClose}>Profile</MenuItem>
-                            <MenuItem onClick={handleClose}>Logout</MenuItem>
+                            <MenuItem onClick={handleClose}>
+                                <LinkDOM to={`/user/@${username}`} style={{ textDecoration: 'none' }}>
+                                    <Typography color="primary.main" variant="body1">
+                                        Profile
+                                    </Typography>
+                                </LinkDOM>
+                            </MenuItem>
+                            <MenuItem onClick={handleLogout}>
+                                <Typography color="#FFFFFF" variant="body1">
+                                    Logout
+                                </Typography>
+                            </MenuItem>
                         </>
-                        : <MenuItem onClick={handleClose}>Login</MenuItem>
+                        : 
+                        <>
+                            <MenuItem onClick={handleClose}>
+                                <LinkDOM to="/login" style={{ textDecoration: 'none' }} >
+                                    <Typography color="primary.main" variant="body1">
+                                        Login
+                                    </Typography>
+                                </LinkDOM>
+                            </MenuItem>
+                        </>
                     }
                 </Menu>
             </Toolbar>

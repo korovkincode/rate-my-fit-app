@@ -3,8 +3,8 @@ import { Form } from '../types/user';
 
 export const signupUser = async (userData: Form) => {
     const response = await APICall({
-        path: '/user/add',
         method: 'POST',
+        path: '/user/add',
         headers: null,
         body: userData
     });
@@ -14,8 +14,8 @@ export const signupUser = async (userData: Form) => {
 
 export const loginUser = async (userData: Form) => {
     const response = await APICall({
-        path: '/user/auth',
         method: 'POST',
+        path: '/user/auth',
         headers: null,
         body: userData
     });
@@ -23,10 +23,23 @@ export const loginUser = async (userData: Form) => {
     return response;
 };
 
+export const getUser = async (userID: string, secretToken: string | null) => {
+    const response = await APICall({
+        method: 'GET',
+        path: `/user/get/${userID}`,
+        headers: {
+            secretToken: secretToken
+        },
+        body: null
+    });
+
+    return response;
+};
+
 export const updateUser = async (userData: Form) => {
     const response = await APICall({
-        path: '/user/update',
         method: 'PUT',
+        path: '/user/update',
         headers: null,
         body: userData
     });

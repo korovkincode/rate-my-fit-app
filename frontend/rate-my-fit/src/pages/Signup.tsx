@@ -1,4 +1,4 @@
-import { Box, Avatar, Typography, Container, Link as LinkMUI} from '@mui/material';
+import { Box, Avatar, Typography, Container, Link as LinkMUI } from '@mui/material';
 import AccountCircleOutlined from '@mui/icons-material/AccountCircleOutlined';
 import { Link as LinkDOM } from 'react-router-dom';
 import UserForm from '../components/UserForm';
