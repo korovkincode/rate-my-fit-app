@@ -1,9 +1,10 @@
-import { useContext, useState } from 'react';
-import { Box, Grid, Typography, TextField, Button } from '@mui/material';
+import { useContext, useState, SyntheticEvent } from 'react';
+import { Box, Grid, Typography, TextField, Button, Snackbar, Alert, SnackbarCloseReason } from '@mui/material';
 import { FormType, Form, FormStatus } from '../types/user';
 import { signupUser, loginUser } from '../API/user';
 import { AuthContext } from '../context';
 import secureLocalStorage from 'react-secure-storage';
+import { SlideTransition } from '../utils';
 
 const UserForm = ({ actionType }: { actionType: FormType}) => {
     const [userData, setUserData] = useState<Form>({
@@ -40,10 +41,27 @@ const UserForm = ({ actionType }: { actionType: FormType}) => {
             return;
         }
 
-        setFormStatus({status: 'success', description: formResponse.message});
         setUserCredentials(formResponse.data);
         secureLocalStorage.setItem('username', userData.username);
+        setSnackbarStatus({
+            open: true, message: formResponse.message
+        });
     };
+
+    const [snackbarStatus, setSnackbarStatus] = useState({
+        'open': false, message: ''
+    });
+
+    const snackbarClose = (
+        event?: SyntheticEvent | Event,
+        reason?: SnackbarCloseReason,
+    ) => {
+        if (reason === 'clickaway') return;
+
+        setSnackbarStatus({
+            'open': false, message: ''
+        });
+    }
 
     return (
         <Box component="form" noValidate sx={{ mt: 3 }}>
@@ -61,14 +79,16 @@ const UserForm = ({ actionType }: { actionType: FormType}) => {
                     <TextField
                         required value={userData.username}
                         onChange={e => setUserData({...userData, username: e.target.value})}
-                        fullWidth label="Username" placeholder={actionType !== 'login' ? 'Choose a username' : 'Enter your username'}
+                        fullWidth label="Username"
+                        placeholder={actionType !== 'login' ? 'Choose a username' : 'Enter your username'}
                     />
                 </Grid>
                 <Grid size={{ xs: 12 }}>
                     <TextField
                         required value={userData.password}
                         onChange={e => setUserData({...userData, password: e.target.value})}
-                        fullWidth label="Password" type="password" placeholder={actionType !== 'login' ? 'Choose a password' : 'Enter your password'}
+                        fullWidth label="Password" type="password"
+                        placeholder={actionType !== 'login' ? 'Choose a password' : 'Enter your password'}
                     />
                 </Grid>
                 {actionType !== 'login' &&
@@ -87,6 +107,20 @@ const UserForm = ({ actionType }: { actionType: FormType}) => {
             >
                 {{'signup': 'Sign up', 'login': 'Login', 'update': 'Update'}[actionType]}
             </Button>
+            <Snackbar
+                open={snackbarStatus.open} autoHideDuration={3000}
+                slots={{ transition: SlideTransition }} onClose={snackbarClose}
+            >
+                <Alert
+                    onClose={snackbarClose}
+                    severity="success"
+                    variant="filled"
+                    sx={{ width: '100%', borderRadius: '20px', fontSize: '16px', color: 'white' }}
+                >
+                    {snackbarStatus.message}
+                </Alert>
+            </Snackbar>    
+            
         </Box>
     );
 };

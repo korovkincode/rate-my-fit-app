@@ -12,7 +12,6 @@ const Signup = () => {
 				flexDirection: 'column',
 				alignItems: 'center' }}
             >
-				
 				<Avatar sx={{ m: 1, bgcolor: 'primary.main' }}>
 					<AccountCircleOutlined />
 				</Avatar>
