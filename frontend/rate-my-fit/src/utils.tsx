@@ -1,6 +1,5 @@
 import secureLocalStorage from 'react-secure-storage';
 import { UserCredentials } from './types/user';
-import Slide, { SlideProps } from '@mui/material/Slide';
 
 export const getCredentials = () => {
     const storedCredentials = secureLocalStorage.getItem('userCredentials');
@@ -12,4 +11,6 @@ export const getCredentials = () => {
     return storedCredentials as UserCredentials;
 };
 
-export const SlideTransition = (props: SlideProps) => <Slide {...props} direction="up" />;
+export const sleep = async (ms: number): Promise<void> => {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+};

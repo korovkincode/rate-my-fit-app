@@ -89,9 +89,14 @@ async def getUser(userID: str, secretToken: str | None = Header(default=None)) -
             status_code=403, detail="Wrong secret token"
         )
 
+    userStats = utils.getUserStats(userID)
     return {
         "message": "Successful retrieving",
-        "data": userData
+        "data": {
+            **userData,
+            "totalFits": userStats["fits"],
+            "totalReviews": userStats["reviews"]
+        }
     }
 
 
@@ -150,4 +155,17 @@ async def setUserPfp(userToken: str, userCredentials: UserCredentialsModel = Bod
     
     return {
         "message": "Successful pfp setting"
+    }
+
+
+@router.get("/{userID}/pfp", response_model=None)
+async def getUserPfp(userID: str) -> HTTPException | dict:
+    if userID.startswith("@"):
+        userToken = utils.getTwinID(userID)
+    else:
+        userToken = userID
+
+    return {
+        "message": "Successful retrieving",
+        "data": utils.findPfp(userToken)
     }

@@ -11,6 +11,7 @@ from routes.item import router as ItemRouter
 app = FastAPI()
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
+app.mount("/pfp", StaticFiles(directory="pfp"), name="pfp")
 
 origins = [
     "http://localhost",

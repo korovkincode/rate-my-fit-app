@@ -2,6 +2,7 @@ from pydantic import BaseModel
 from pydantic import model_validator
 import json
 
+
 class AbstractModel(BaseModel):
     #Removes all fields with null values
     def model_dump(self, *args, **kwargs):

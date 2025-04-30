@@ -4,7 +4,11 @@ import { FormType, Form, FormStatus } from '../types/user';
 import { signupUser, loginUser } from '../API/user';
 import { AuthContext } from '../context';
 import secureLocalStorage from 'react-secure-storage';
-import { SlideTransition } from '../utils';
+import Slide, { SlideProps } from '@mui/material/Slide';
+
+export const SlideTransition = (
+    props: SlideProps, direction: 'up' | 'left' | 'right' | 'down' | undefined
+) => <Slide {...props} direction={direction ? direction : 'up'} />;
 
 const UserForm = ({ actionType }: { actionType: FormType}) => {
     const [userData, setUserData] = useState<Form>({
@@ -109,7 +113,7 @@ const UserForm = ({ actionType }: { actionType: FormType}) => {
             </Button>
             <Snackbar
                 open={snackbarStatus.open} autoHideDuration={3000}
-                slots={{ transition: SlideTransition }} onClose={snackbarClose}
+                slots={{ transition: (props) => SlideTransition(props, 'up') }} onClose={snackbarClose}
             >
                 <Alert
                     onClose={snackbarClose}

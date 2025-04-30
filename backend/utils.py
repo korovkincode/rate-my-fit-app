@@ -9,6 +9,10 @@ def getFileExtension(filename: str) -> str:
     return filename[filename.rindex("."):]
 
 
+def getFileBasename(filename: str) -> str:
+    return filename[:filename.rindex(".")]
+
+
 def collectPics(pics: list[UploadFile], picStatus: dict) -> List[str]:
     if not picStatus["flag"] and picStatus.get("picnames", None):
         for picname in picStatus["picnames"]:
@@ -62,3 +66,29 @@ def checkItems(itemsID: List[str]) -> bool:
             return False
         
     return True
+
+
+def findPfp(userToken: str) -> HTTPException | str:
+    pfpFiles = os.listdir("pfp")
+    for filename in pfpFiles:
+        if userToken == getFileBasename(filename):
+            return filename
+        
+    raise HTTPException(
+        status_code=404, detail="No pfp for this user"
+    )
+
+
+def getUserStats(userID: str) -> dict:
+    if userID.startswith("@"):
+        userToken = getTwinID(userID)
+    else:
+        userToken = userID
+    
+    userFits = [fit for fit in Database.Fits.find({"authorToken": userToken})]
+    userReviews = [review for review in Database.Reviews.find({"authorToken": userToken})]
+
+    return {
+        "fits": len(userFits),
+        "reviews": len(userReviews)
+    }

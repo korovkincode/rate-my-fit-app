@@ -26,7 +26,7 @@ export const loginUser = async (userData: Form) => {
 export const getUser = async (userID: string, secretToken: string | null) => {
     const response = await APICall({
         method: 'GET',
-        path: `/user/get/${userID}`,
+        path: `/user/${userID}`,
         headers: {
             secretToken: secretToken
         },
@@ -46,3 +46,14 @@ export const updateUser = async (userData: Form) => {
 
     return response;
 };
+
+export const getUserPfp = async (userID: string) => {
+    const response = await APICall({
+        method: 'GET',
+        path: `/user/${userID}/pfp`,
+        headers: null,
+        body: null
+    });
+
+    return response;
+}
