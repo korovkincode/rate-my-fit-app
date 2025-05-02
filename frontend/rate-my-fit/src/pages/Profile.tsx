@@ -2,7 +2,7 @@ import { useState, useContext, useEffect, MouseEvent } from 'react';
 import { AuthContext } from '../context';
 import { useParams } from 'react-router-dom';
 import { Stack, Box, Container, Avatar, Typography, Grid, Skeleton, Divider, Popover } from '@mui/material';
-import { getUser, getUserPfp } from '../API/user';
+import { getUser, getUserPfpDirect } from '../API/user';
 import { API_URL } from '../API/API';
 import { sleep, getPfpToken } from '../utils';
 import { Fit } from '../types/fit';
@@ -61,14 +61,7 @@ const Profile = () => {
                 setUsernamesData({ [userRequest.data.userToken]: userRequest.data.username });
             }
 
-            const pfpRequest = await getUserPfp(userID);
-            if (pfpRequest.status === 404) {
-                setPfpLink('https://i.pinimg.com/originals/83/bc/8b/83bc8b88cf6bc4b4e04d153a418cde62.jpg');
-            } else if (pfpRequest.status === 200) {
-                setPfpLink(`${API_URL}/pfp/${pfpRequest.data}`);
-            } else {
-                throw new Error(userRequest.description);
-            }
+            setPfpLink(await getUserPfpDirect(userID));
         };
 
         const fetchFits = async () => {

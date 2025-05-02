@@ -1,4 +1,4 @@
-import { APICall } from './API';
+import { APICall, API_URL } from './API';
 import { Form } from '../types/user';
 
 export const signupUser = async (userData: Form) => {
@@ -56,4 +56,11 @@ export const getUserPfp = async (userID: string) => {
     });
 
     return response;
+}
+
+export const getUserPfpDirect = async (userID: string) => {
+    const pfpRequest = await getUserPfp(userID);
+
+    if (pfpRequest.status !== 200) return 'https://i.pinimg.com/originals/83/bc/8b/83bc8b88cf6bc4b4e04d153a418cde62.jpg';
+    return `${API_URL}/pfp/${pfpRequest.data}`;
 }

@@ -1,9 +1,10 @@
-import { useState, MouseEvent, useContext } from 'react';
-import { AppBar, Box, Toolbar, Typography, IconButton, Menu, MenuItem } from '@mui/material';
-import AccountCircle from '@mui/icons-material/AccountCircle';
+import { useState, MouseEvent, useContext, useEffect } from 'react';
+import { AppBar, Box, Toolbar, Typography, IconButton, Menu, MenuItem, ListItemIcon, Avatar } from '@mui/material';
+import { AccountCircle, Settings, Logout, Login, Person, PersonAdd } from '@mui/icons-material';
 import { Link as LinkDOM } from 'react-router-dom';
 import { AuthContext } from '../context';
 import secureLocalStorage from 'react-secure-storage';
+import { getUserPfpDirect } from '../API/user';
 
 const Navbar = () => {
     const authContext = useContext(AuthContext);
@@ -11,8 +12,16 @@ const Navbar = () => {
         throw new Error('AuthContext is not defined');
     }
     const [userCredentials, setUserCredentials] = authContext;
-    const username = secureLocalStorage.getItem('username');
+    const [username, setUsername] = useState<string | null>((secureLocalStorage.getItem('username') || '') as string);
+    const [pfpLink, setPfpLink] = useState<string | null>();
 
+    useEffect(() => {
+        setUsername((secureLocalStorage.getItem('username') || '') as string);
+
+        const fetchPfp = async () => setPfpLink(await getUserPfpDirect(userCredentials.userToken));
+        fetchPfp();
+    }, [userCredentials, setUserCredentials]);
+    
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
     const handleMenu = (event: MouseEvent<HTMLElement>) => {
@@ -27,9 +36,7 @@ const Navbar = () => {
         setUserCredentials({
             'userToken': '', 'secretToken': ''
         });
-        if ('username' in secureLocalStorage) {
-            delete secureLocalStorage['username'];
-        }
+        secureLocalStorage.setItem('username', '');
         handleClose();
     }
 
@@ -42,53 +49,90 @@ const Navbar = () => {
                 </Typography>
                 <IconButton
                     size="large"
-                    aria-label="account of current user"
                     aria-controls="menu-appbar"
                     aria-haspopup="true"
                     onClick={handleMenu}
                     color="inherit"
                 >
-                    <AccountCircle />
+                    <Avatar sx={{ width: '45px', height: '45px' }} src={pfpLink || ''} />
                 </IconButton>
                 <Menu
                     id="menu-appbar"
-                    sx={{ mt: '30px' }}
                     anchorEl={anchorEl}
-                    anchorOrigin={{
-                        vertical: 'top',
-                        horizontal: 'right',
-                    }}
                     keepMounted
-                    transformOrigin={{
-                        vertical: 'top',
-                        horizontal: 'right',
-                    }}
                     open={Boolean(anchorEl)}
                     onClose={handleClose}
+                    slotProps={{
+                        paper: {
+                            elevation: 0,
+                            sx: {
+                                overflow: 'visible',
+                                filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
+                                mt: 1,
+                                '& .MuiAvatar-root': {
+                                    width: 32,
+                                    height: 32,
+                                    ml: -0.5,
+                                    mr: 1,
+                                },
+                                '&::before': {
+                                    content: '""',
+                                    display: 'block',
+                                    position: 'absolute',
+                                    top: 0,
+                                    right: 14,
+                                    width: 10,
+                                    height: 10,
+                                    bgcolor: 'background.paper',
+                                    transform: 'translateY(-50%) rotate(45deg)',
+                                    zIndex: 0,
+                                },
+                            },
+                        }
+                    }}
+                    transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+                    anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
                 >
                     {userCredentials.userToken !== ''
                         ?
                         <> 
                             <MenuItem onClick={handleClose}>
-                                <LinkDOM to={`/user/@${username}`} style={{ textDecoration: 'none' }}>
-                                    <Typography color="primary.main" variant="body1">
-                                        Profile
-                                    </Typography>
+                                <ListItemIcon>
+                                    <Person fontSize="small" />
+                                </ListItemIcon>
+                                <LinkDOM to={`/user/@${username}`} style={{ color: 'inherit', textDecoration: 'none' }}>
+                                    Profile
                                 </LinkDOM>
                             </MenuItem>
+                            <MenuItem>
+                                <ListItemIcon>
+                                    <Settings fontSize="small" />
+                                </ListItemIcon>
+                                Settings
+                            </MenuItem>
                             <MenuItem onClick={handleLogout}>
-                                <Typography color="#FFFFFF" variant="body1">
-                                    Logout
-                                </Typography>
+                                <ListItemIcon>
+                                    <Logout fontSize="small" />
+                                </ListItemIcon>
+                                Logout
                             </MenuItem>
                         </>
                         : 
                         <>
                             <MenuItem onClick={handleClose}>
-                                <LinkDOM to="/login" style={{ textDecoration: 'none' }} >
-                                    <Typography color="primary.main" variant="body1">
-                                        Login
-                                    </Typography>
+                                <ListItemIcon>
+                                    <PersonAdd fontSize="small" />
+                                </ListItemIcon>
+                                <LinkDOM to="/signup" style={{ color: 'inherit', textDecoration: 'none' }}>
+                                    Sign up
+                                </LinkDOM>
+                            </MenuItem>
+                            <MenuItem onClick={handleClose}>
+                                <ListItemIcon>
+                                    <Login fontSize="small" />
+                                </ListItemIcon>
+                                <LinkDOM to="/login" style={{ color: 'inherit', textDecoration: 'none' }}>
+                                    Login
                                 </LinkDOM>
                             </MenuItem>
                         </>
