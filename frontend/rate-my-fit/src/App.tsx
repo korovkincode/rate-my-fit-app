@@ -10,7 +10,7 @@ import secureLocalStorage from 'react-secure-storage';
 
 const App = () => {
 	const [userCredentials, setUserCredentials] = useState<UserCredentials>(getCredentials());
-	
+
 	return (
 		<AuthContext.Provider
 			value={[ userCredentials, (newCredentials) => {

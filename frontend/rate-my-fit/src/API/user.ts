@@ -27,9 +27,9 @@ export const getUser = async (userID: string, secretToken: string | null) => {
     const response = await APICall({
         method: 'GET',
         path: `/user/${userID}`,
-        headers: {
+        headers: secretToken ? {
             secretToken: secretToken
-        },
+        } : null,
         body: null
     });
 

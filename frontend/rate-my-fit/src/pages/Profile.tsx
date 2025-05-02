@@ -1,17 +1,22 @@
-import { useState, useContext, useEffect } from 'react';
+import { useState, useContext, useEffect, MouseEvent } from 'react';
 import { AuthContext } from '../context';
 import { useParams } from 'react-router-dom';
-import { Container, Avatar, Typography, Grid, Box, Skeleton } from '@mui/material';
+import { Stack, Box, Container, Avatar, Typography, Grid, Skeleton, Divider, Popover } from '@mui/material';
 import { getUser, getUserPfp } from '../API/user';
 import { API_URL } from '../API/API';
-import { sleep } from '../utils';
+import { sleep, getPfpToken } from '../utils';
+import { Fit } from '../types/fit';
+import { Item } from '../types/item';
+import FitCard from '../components/FitCard';
+import { getUserFits } from '../API/fit';
+import { getItem } from '../API/item';
 
 const Profile = () => {
     const authContext = useContext(AuthContext);
     if (!authContext) {
         throw new Error('AuthContext is not defined');
     }
-    const [userCredentials, setUserCredentials] = authContext;
+    const [userCredentials, setUserCredentials] = authContext; 
 
     const [userDataLoaded, setUserDataLoaded] = useState(false);
     const [userFitsLoaded, setUserFitsLoaded] = useState(false);
@@ -32,15 +37,28 @@ const Profile = () => {
         password: string | null,
     } | null>(null);
     const [pfpLink, setPfpLink] = useState<string | null>(null);
+    const [editMode, setEditMode] = useState(false);
+    const [userFits, setUserFits] = useState<Fit[] | null>(null);
+    const [itemsData, setItemsData] = useState<{
+        [itemID: string]: Item
+    } | null>(null);
+    const [usernamesData, setUsernamesData] = useState<{
+        [userID: string]: string
+    } | null>(null);
 
     useEffect(() => {
-        const fetchData = async () => {
+        setUserData(null);
+        setPfpLink(null);
+        setUserFits(null);
+
+        const fetchUser = async () => {
             await sleep(1000); //To test skeleton loading
-            const userRequest = await getUser(userID, userCredentials.secretToken);
+            const userRequest = await getUser(userID, null);
             if (userRequest.status !== 200) {
                 throw new Error(userRequest.description);
             } else {
                 setUserData(userRequest.data);
+                setUsernamesData({ [userRequest.data.userToken]: userRequest.data.username });
             }
 
             const pfpRequest = await getUserPfp(userID);
@@ -53,21 +71,49 @@ const Profile = () => {
             }
         };
 
-        fetchData();
+        const fetchFits = async () => {
+            await sleep(1000); //To test skeleton loading
+            const fitsRequest = await getUserFits(userID);
+            if (fitsRequest.status !== 200) {
+                throw new Error(fitsRequest.description);
+            } else {
+                setUserFits(fitsRequest.data);
+                let tempItemsData = {} as { [itemID: string]: Item };
+
+                for (const fit of fitsRequest.data) {
+                    for (const itemID of fit.itemsID) {
+                        if (itemID in tempItemsData) continue;
+
+                        const itemRequest = await getItem(itemID);
+                        if (itemRequest.status !== 200) {
+                            throw new Error(itemRequest.description);
+                        } else {
+                            tempItemsData[itemID] = itemRequest.data;
+                        }
+                    }
+                }
+                setItemsData(tempItemsData);
+            }
+        }
+
+        fetchUser();
+        fetchFits();
     }, [userID]);
 
     useEffect(() => {
-        if (userData && pfpLink) {
-            setUserDataLoaded(true);
-        }
-    }, [userData, pfpLink]);
+        setUserDataLoaded(userData !== null && pfpLink !== null);
+        setEditMode(pfpLink !== null && userCredentials.userToken === getPfpToken(pfpLink));
+        setUserFitsLoaded(userFits !== null && itemsData !== null);
+    }, [userData, pfpLink, userFits, itemsData, usernamesData, userCredentials]);
 
     return (
-        <Container maxWidth="sm" sx={{ 
-            marginTop: '2rem'
-        }}>
-            <Grid container spacing={2}>
-                <Grid size={{ xs: 12, sm: 6 }} sx={{ display: 'flex', justifyContent: 'center' }}>
+        <>
+            <Stack
+                direction={{ xs: 'column', sm: 'row' }}
+                sx={{ mt: 6, justifyContent: 'center' }}
+                spacing={{ xs: 4, sm: 10}}
+            >
+                <Box sx={{ alignSelf: 'center' }}>
                     {userDataLoaded && userData
                     ?
                         <Avatar
@@ -82,36 +128,64 @@ const Profile = () => {
                             height={140}
                         />
                     }
-                </Grid>
-                <Grid size={{ xs: 12, sm: 6 }}>
-                    <Box sx={{
-                        display: 'flex', flexDirection: 'column',
-                        alignItems: { xs: 'center', sm: 'inherit' }
-                    }}>
-                        {userDataLoaded && userData
-                        ? 
-                        <>
-                            <Typography variant="h4" component="h1" sx={{ mt: 1 }}>
-                                {userData.username || ''}
-                            </Typography>
-                            <Typography color="text.secondary" sx={{ mt: 1.5, fontSize: '16px' }}>
-                                {userData.bio || 'no bio yet :('}
-                            </Typography>
-                            <Typography variant="body2" sx={{ mt: 2 }}>
-                                {userData.totalFits} fit{userData.totalFits !== 1 && 's'} • {userData.totalReviews} review{userData.totalReviews !== 1 && 's'}
-                            </Typography>
-                        </>
+                </Box>
+                <Box sx={{
+                    display: 'flex', flexDirection: 'column',
+                    alignItems: { xs: 'center', sm: 'inherit' }
+                }}>
+                    {userDataLoaded
+                    ? 
+                    <>
+                        <Typography variant="h4" component="h1" sx={{ mt: 1 }}>
+                            {userData?.username || ''}
+                        </Typography>
+                        <Typography color="text.secondary" sx={{ mt: 1.5, fontSize: '16px' }}>
+                            {userData?.bio || 'no bio yet :('}
+                        </Typography>
+                        <Typography variant="body2" sx={{ mt: 2 }}>
+                            {userData?.totalFits} fit{userData?.totalFits !== 1 && 's'} • {userData?.totalReviews} review{userData?.totalReviews !== 1 && 's'}
+                        </Typography>
+                    </>
+                    :
+                    <>
+                        <Skeleton component="h1" sx={{ mt : 1 }} width="200px"/>
+                        <Skeleton sx={{ mt: 1.5 }} width="100px"/>
+                        <Skeleton sx={{ mt : 2 }} width="130px" />
+                    </>
+                    }
+                </Box>
+            </Stack>
+            <Container maxWidth="md">
+                <Divider sx={{ mt: 6, borderBottomWidth: 3 }} />
+                <Grid container spacing={2} sx={{ mt: 5 }}>
+                    {userFitsLoaded && itemsData && usernamesData && (userFits?.length || 0) > 0
+                    ?   userFits?.map((fit, index) =>
+                            <Grid size={{ xs: 12, md: 4 }} key={index}>
+                                <FitCard
+                                    fitData={fit} itemsData={itemsData}
+                                    usernamesData={usernamesData} authorPfpLink={pfpLink || ''}
+                                />
+                            </Grid>
+                        )
+                    :
+                        !userData || userData && userData.totalFits > 0 
+                        ?
+                            Array(userData?.totalFits).fill(0).map((_, index) =>
+                                <Grid size={{ xs: 12, md: 4 }} key={index}>
+                                    <Skeleton
+                                        variant="rectangular" 
+                                        sx={{ 
+                                            width: '100%', height: {xs: '100vw', md: '22vw'}
+                                        }}
+                                    />
+                                </Grid>
+                            )
                         :
-                        <>
-                            <Skeleton component="h1" sx={{ mt : 1 }} />
-                            <Skeleton sx={{ mt: 1.5 }} />
-                            <Skeleton sx={{ mt : 2 }} width="40%" />
-                        </>
-                        }
-                    </Box>
+                            <Typography>No fits</Typography>
+                    }
                 </Grid>
-            </Grid>
-        </Container>
+            </Container>
+        </>
     );
 }
 

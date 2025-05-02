@@ -58,20 +58,20 @@ async def addUser(userData: UserModel) -> HTTPException | dict:
 @router.get("/{userID}", response_model=None)
 async def getUser(userID: str, secretToken: str | None = Header(default=None)) -> HTTPException | dict:
     queryOptions = hiddenData = {}
-    if userID.startswith("@"):
+    if userID.startswith("@") or secretToken is None:
         #Retrieving public info
-        queryOptions = {
-            "username": userID[1:]
-        }
+        if userID.startswith("@"):
+            queryOptions = {
+                "username": userID[1:]
+            }
+        else:
+            queryOptions = {
+                "userToken": userID
+            }
         hiddenData = {
-            "userToken": 0,
             "secretToken": 0,
             "password": 0
         }
-    elif secretToken is None:
-        raise HTTPException(
-            status_code=403, detail="Secret token was not provided"
-        )
     else:
         #Retrieving full info
         queryOptions = {
@@ -84,7 +84,7 @@ async def getUser(userID: str, secretToken: str | None = Header(default=None)) -
         raise HTTPException(
             status_code=404, detail="No such user"
         )
-    if "userToken" in queryOptions and secretToken != userData["secretToken"]:
+    if secretToken is not None and secretToken != userData["secretToken"]:
         raise HTTPException(
             status_code=403, detail="Wrong secret token"
         )
