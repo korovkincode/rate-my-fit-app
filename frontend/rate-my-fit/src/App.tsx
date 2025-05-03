@@ -7,6 +7,7 @@ import { AuthContext } from './context';
 import { UserCredentials } from './types/user';
 import { getCredentials } from './utils';
 import secureLocalStorage from 'react-secure-storage';
+import { Container } from '@mui/material';
 
 const App = () => {
 	const [userCredentials, setUserCredentials] = useState<UserCredentials>(getCredentials());
@@ -19,8 +20,10 @@ const App = () => {
 			}]}
 		>
 			<BrowserRouter>
-				<Navbar />
-				<Router />
+				<Container maxWidth="lg">
+					<Navbar />
+					<Router />
+				</Container>
 			</BrowserRouter>
 		</AuthContext.Provider>
 	);

@@ -103,7 +103,7 @@ const Profile = () => {
             <Stack
                 direction={{ xs: 'column', sm: 'row' }}
                 sx={{ mt: 6, justifyContent: 'center' }}
-                spacing={{ xs: 4, sm: 10}}
+                spacing={{ xs: 3, sm: 10}}
             >
                 <Box sx={{ alignSelf: 'center' }}>
                     {userDataLoaded && userData

@@ -25,17 +25,13 @@ const FitCard = ({ fitData, itemsData, usernamesData, authorPfpLink }: {
 
     return (
         <>
-            <Card sx={{ borderRadius: 5, boxShadow: 3, position: 'relative', bgcolor: '#000000' }} ref={fitContainerRef}>
+            <Card sx={{ borderRadius: 5, boxShadow: 3, position: 'relative' }} ref={fitContainerRef}>
                 <CardActions
                     sx={{
-                        justifyContent: 'center',
-                        height: '15px',
-                        bgcolor: '#FFFFFF',
-                        width: '40%',
-                        ml: 'auto',
-                        mr: 'auto',
-                        borderBottomLeftRadius: 15,
-                        borderBottomRightRadius: 15
+                        justifyContent: 'center', height: '15px',
+                        bgcolor: '#FFFFFF', width: '40%',
+                        ml: 'auto', mr: 'auto',
+                        borderBottomLeftRadius: 15, borderBottomRightRadius: 15
                     }}
                 >
                     <IconButton onClick={() => setItemsOpen(true)} sx={{ color: '#000000' }}>
@@ -60,8 +56,7 @@ const FitCard = ({ fitData, itemsData, usernamesData, authorPfpLink }: {
                             title: {fontSize: 24, fontWeight: 700},
                             subheader: {fontSize: 14, fontWeight: 300}
                         }}
-                        title={fitData.title}
-                        subheader={formatDate(fitData.date)}
+                        title={fitData.title} subheader={formatDate(fitData.date)}
                     />
                     <CardMedia        
                         component="img"
@@ -70,10 +65,8 @@ const FitCard = ({ fitData, itemsData, usernamesData, authorPfpLink }: {
                     />
                 </LinkDOM>
                 <Drawer
-                    open={itemsOpen}
-                    onClose={() => setItemsOpen(false)}
-                    anchor="top"
-                    variant="temporary"
+                    open={itemsOpen} onClose={() => setItemsOpen(false)}
+                    anchor="top" variant="temporary"
                     transitionDuration={{ appear: 100, enter: 500, exit: 500 }}
                     container={fitContainerRef.current}
                     ModalProps={{
