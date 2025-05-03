@@ -1,12 +1,13 @@
 import { List, ListItem, ListItemAvatar, Avatar, ListItemText, Typography, Divider } from '@mui/material';
 import { Item } from '../types/item';
 import { getTotal } from '../utils';
+import { Link as LinkDOM} from 'react-router-dom';
 
 const ItemsTable = ({ itemsData }: {itemsData: {[itemID: string]: Item}}) => {
     return (
         <List sx={{ width: '100%', bgcolor: '#FFFFFF' }}>
             {Object.values(itemsData).map((item, index) =>
-                <>
+                <LinkDOM to={`/item/${item.itemID}`} style={{ textDecoration: 'none' }}>
                     <ListItem key={index}>
                         <ListItemAvatar>
                             <Avatar
@@ -36,7 +37,7 @@ const ItemsTable = ({ itemsData }: {itemsData: {[itemID: string]: Item}}) => {
                         sx={{ bgcolor: 'secondary.light', borderBottomWidth: 2 }}
                         variant="middle" component="li"
                     />
-                </>
+                </LinkDOM>
             )}
             <ListItem>
                 <ListItemText sx={{ color: '#000000' }}

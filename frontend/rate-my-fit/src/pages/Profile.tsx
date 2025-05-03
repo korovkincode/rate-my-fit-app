@@ -1,9 +1,8 @@
-import { useState, useContext, useEffect, MouseEvent } from 'react';
+import { useState, useContext, useEffect } from 'react';
 import { AuthContext } from '../context';
 import { useParams } from 'react-router-dom';
-import { Stack, Box, Container, Avatar, Typography, Grid, Skeleton, Divider, Popover } from '@mui/material';
+import { Stack, Box, Container, Avatar, Typography, Grid, Skeleton, Divider } from '@mui/material';
 import { getUser, getUserPfpDirect } from '../API/user';
-import { API_URL } from '../API/API';
 import { sleep, getPfpToken } from '../utils';
 import { Fit } from '../types/fit';
 import { Item } from '../types/item';
@@ -115,11 +114,7 @@ const Profile = () => {
                             sx={{ width: '140px', height: '140px' }}
                         />
                     :
-                        <Skeleton
-                            variant="circular"
-                            width={140}
-                            height={140}
-                        />
+                        <Skeleton variant="circular" width={140} height={140} />
                     }
                 </Box>
                 <Box sx={{
@@ -129,10 +124,10 @@ const Profile = () => {
                     {userDataLoaded
                     ? 
                     <>
-                        <Typography variant="h4" component="h1" sx={{ mt: 1 }}>
+                        <Typography variant="h4" component="h1" sx={{ mt: 1, fontWeight: 700 }}>
                             {userData?.username || ''}
                         </Typography>
-                        <Typography color="text.secondary" sx={{ mt: 1.5, fontSize: '16px' }}>
+                        <Typography color="text.secondary" sx={{ mt: 1.5, fontSize: '18px' }}>
                             {userData?.bio || 'no bio yet :('}
                         </Typography>
                         <Typography variant="body2" sx={{ mt: 2 }}>
@@ -141,9 +136,9 @@ const Profile = () => {
                     </>
                     :
                     <>
-                        <Skeleton component="h1" sx={{ mt : 1 }} width="200px"/>
-                        <Skeleton sx={{ mt: 1.5 }} width="100px"/>
-                        <Skeleton sx={{ mt : 2 }} width="130px" />
+                        <Skeleton component="h1" sx={{ mt : 1 }} width={200} />
+                        <Skeleton sx={{ mt: 1.5 }} width={100} />
+                        <Skeleton sx={{ mt : 2 }} width={130} />
                     </>
                     }
                 </Box>

@@ -5,6 +5,10 @@ const theme = createTheme({
         mode: 'dark',
         background: {
             default: '#DC343B'
+        },
+        primary: {
+            'main': '#FFFFFF',
+            'dark': '#000000',
         }
     },
     components: {

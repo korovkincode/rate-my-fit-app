@@ -1,13 +1,13 @@
 import { useState, useRef } from 'react';
 import { Fit } from '../types/fit';
 import { Item } from '../types/item';
-import { Card, CardHeader, Avatar, CardMedia, MobileStepper, Button, IconButton, Drawer, Box, CardActions } from '@mui/material';
-import { KeyboardArrowLeft, KeyboardArrowRight, KeyboardArrowUp, KeyboardArrowDown, Visibility } from '@mui/icons-material';
+import { Card, CardHeader, Avatar, CardMedia, MobileStepper, Button, IconButton, Drawer, CardActions } from '@mui/material';
+import { KeyboardArrowLeft, KeyboardArrowRight, KeyboardArrowDown } from '@mui/icons-material';
 import { API_URL } from '../API/API';
 import { formatDate } from '../utils';
 import { Link as LinkDOM } from 'react-router-dom';
 import ItemsTable from './ItemsTable';
-
+import { BounceDown, Shake } from './animations';
 
 const FitCard = ({ fitData, itemsData, usernamesData, authorPfpLink }: {
     fitData: Fit, itemsData: {[itemID: string]: Item},
@@ -25,57 +25,50 @@ const FitCard = ({ fitData, itemsData, usernamesData, authorPfpLink }: {
 
     return (
         <>
-            <Card
-                sx={{
-                    borderRadius: 3, boxShadow: 3,
-                    position: "relative"
-                }}
-                ref={fitContainerRef}
-            >
+            <Card sx={{ borderRadius: 5, boxShadow: 3, position: 'relative', bgcolor: '#000000' }} ref={fitContainerRef}>
                 <CardActions
                     sx={{
                         justifyContent: 'center',
-                        height: '10px',
-                        background: '#ffffff'
+                        height: '15px',
+                        bgcolor: '#FFFFFF',
+                        width: '40%',
+                        ml: 'auto',
+                        mr: 'auto',
+                        borderBottomLeftRadius: 15,
+                        borderBottomRightRadius: 15
                     }}
                 >
-                    <IconButton
-                        onClick={() => setItemsOpen(true)}
-                        sx={{
-                            color: '#000000'
-                        }}
-                    >
-                        <KeyboardArrowDown />
+                    <IconButton onClick={() => setItemsOpen(true)} sx={{ color: '#000000' }}>
+                        <KeyboardArrowDown sx={{ animation: `${BounceDown(3)} 2s ease infinite` }} />
                     </IconButton>
                 </CardActions>
-                <CardHeader
-                    avatar={
-                        <LinkDOM to={`/user/@${usernamesData[fitData.authorToken]}`}>
-                            <Avatar src={authorPfpLink} />
-                        </LinkDOM>
-                    }
-                    action={
-                        <IconButton sx={{ mr: 0.3, mt: 0.3 }}>
-                            <LinkDOM
-                                to={`/fit/${fitData.fitID}`}
-                                style={{ color: 'inherit', textDecoration: 'none' }}
-                            >
-                                <Visibility />
+                <LinkDOM to={`/fit/${fitData.fitID}`} style={{ color: 'inherit', textDecoration: 'none' }}>
+                    <CardHeader
+                        avatar={
+                            <LinkDOM to={`/user/@${usernamesData[fitData.authorToken]}`}>
+                                <Avatar
+                                    alt={usernamesData[fitData.authorToken]}
+                                    src={authorPfpLink}
+                                    sx={{
+                                        mr: 0.5,
+                                        animation: `${Shake(1.1, 3)} 2s ease infinite`
+                                    }} 
+                                />
                             </LinkDOM>
-                        </IconButton>
-                    }
-                    slotProps={{
-                        title: {fontSize: 24},
-                        subheader: {fontSize: 14}
-                    }}
-                    title={fitData.title}
-                    subheader={formatDate(fitData.date)}
-                />
-                <CardMedia        
-                    component="img"
-                    image={fitData.picnames ? `${API_URL}/static/${fitData.picnames[imgIndex]}` : ''}
-                    alt={`${fitData.title} - ${imgIndex + 1}`}
-                />
+                        }
+                        slotProps={{
+                            title: {fontSize: 24, fontWeight: 700},
+                            subheader: {fontSize: 14, fontWeight: 300}
+                        }}
+                        title={fitData.title}
+                        subheader={formatDate(fitData.date)}
+                    />
+                    <CardMedia        
+                        component="img"
+                        image={fitData.picnames ? `${API_URL}/static/${fitData.picnames[imgIndex]}` : ''}
+                        alt={`${fitData.title} - ${imgIndex + 1}`}
+                    />
+                </LinkDOM>
                 <Drawer
                     open={itemsOpen}
                     onClose={() => setItemsOpen(false)}
