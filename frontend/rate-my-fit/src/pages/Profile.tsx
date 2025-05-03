@@ -60,7 +60,7 @@ const Profile = () => {
                 setUserData(userRequest.data);
                 setUsernamesData({ [userRequest.data.userToken]: userRequest.data.username });
             }
-
+            
             setPfpLink(await getUserPfpDirect(userID));
         };
 

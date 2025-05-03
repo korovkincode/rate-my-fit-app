@@ -1,5 +1,6 @@
 import secureLocalStorage from 'react-secure-storage';
 import { UserCredentials } from './types/user';
+import { Item } from './types/item';
 
 export const getCredentials = () => {
     const storedCredentials = secureLocalStorage.getItem('userCredentials');
@@ -24,4 +25,10 @@ export const formatDate = (date: string) => {
     const monthName = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     const [day, month, year] = date.split('-');
     return `${monthName[Number(month) - 1]} ${Number(day)}, ${year}`;
+}
+
+export const getTotal = (items: Item[]) => {
+    let total = 0;
+    items.forEach(item => total += item.price);
+    return total;
 }

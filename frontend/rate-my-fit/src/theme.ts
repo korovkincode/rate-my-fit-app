@@ -6,7 +6,17 @@ const theme = createTheme({
         background: {
             default: '#DC343B'
         }
-    }
+    },
+    components: {
+        MuiAvatar: {
+            styleOverrides: {
+                img: {
+                    objectFit: 'contain',
+                    height: '100%',
+                },
+            },
+        },
+    },
 });
 
 export default theme;

@@ -1,11 +1,12 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { Fit } from '../types/fit';
 import { Item } from '../types/item';
-import { Card, CardHeader, Avatar, CardMedia, MobileStepper, Button, IconButton } from '@mui/material';
-import { KeyboardArrowLeft, KeyboardArrowRight, Visibility } from '@mui/icons-material';
+import { Card, CardHeader, Avatar, CardMedia, MobileStepper, Button, IconButton, Drawer, Box, CardActions } from '@mui/material';
+import { KeyboardArrowLeft, KeyboardArrowRight, KeyboardArrowUp, KeyboardArrowDown, Visibility } from '@mui/icons-material';
 import { API_URL } from '../API/API';
 import { formatDate } from '../utils';
 import { Link as LinkDOM } from 'react-router-dom';
+import ItemsTable from './ItemsTable';
 
 
 const FitCard = ({ fitData, itemsData, usernamesData, authorPfpLink }: {
@@ -17,11 +18,36 @@ const FitCard = ({ fitData, itemsData, usernamesData, authorPfpLink }: {
         throw new Error('Author token is not defined');
     }
 
-    const [imgIndex, setImgIndex] = useState(0);
+    const [imgIndex, setImgIndex] = useState<number>(0);
+
+    const [itemsOpen, setItemsOpen] = useState<boolean>(false);
+    const fitContainerRef = useRef(null);
 
     return (
         <>
-            <Card sx={{ borderRadius: 3, boxShadow: 3 }}>
+            <Card
+                sx={{
+                    borderRadius: 3, boxShadow: 3,
+                    position: "relative"
+                }}
+                ref={fitContainerRef}
+            >
+                <CardActions
+                    sx={{
+                        justifyContent: 'center',
+                        height: '10px',
+                        background: '#ffffff'
+                    }}
+                >
+                    <IconButton
+                        onClick={() => setItemsOpen(true)}
+                        sx={{
+                            color: '#000000'
+                        }}
+                    >
+                        <KeyboardArrowDown />
+                    </IconButton>
+                </CardActions>
                 <CardHeader
                     avatar={
                         <LinkDOM to={`/user/@${usernamesData[fitData.authorToken]}`}>
@@ -50,6 +76,26 @@ const FitCard = ({ fitData, itemsData, usernamesData, authorPfpLink }: {
                     image={fitData.picnames ? `${API_URL}/static/${fitData.picnames[imgIndex]}` : ''}
                     alt={`${fitData.title} - ${imgIndex + 1}`}
                 />
+                <Drawer
+                    open={itemsOpen}
+                    onClose={() => setItemsOpen(false)}
+                    anchor="top"
+                    variant="temporary"
+                    transitionDuration={{ appear: 100, enter: 500, exit: 500 }}
+                    container={fitContainerRef.current}
+                    ModalProps={{
+                        container: fitContainerRef.current,
+                        disablePortal: true
+                    }}
+                    sx={{
+                        position: 'absolute', 
+                        '& .MuiPaper-root': {
+                            position: 'absolute'
+                        }
+                    }}
+                >
+                    <ItemsTable itemsData={itemsData} />
+                </Drawer>
             </Card>
             <MobileStepper
                 variant="dots" steps={fitData.picnames?.length || 0} position="static"
