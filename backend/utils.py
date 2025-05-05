@@ -44,6 +44,10 @@ def getTwinID(userID: str) -> HTTPException | str:
     return userData[twinID]
 
 
+def collectionToList(collection) -> list:
+    return [item for item in collection]
+
+
 def findByRelation(collection, filter: dict, hide: dict, start: int = None, limit: int = None) -> list:
     resultStart = 0
     if start is not None:
@@ -54,7 +58,7 @@ def findByRelation(collection, filter: dict, hide: dict, start: int = None, limi
         queryParams["limit"] = resultStart + limit
 
     resultsCursor = collection.find(filter, hide, **queryParams)
-    return [result for result in resultsCursor][resultStart:]
+    return collectionToList(resultsCursor)[resultStart:]
 
 
 def checkItems(itemsID: List[str]) -> bool:
@@ -85,8 +89,8 @@ def getUserStats(userID: str) -> dict:
     else:
         userToken = userID
     
-    userFits = [fit for fit in Database.Fits.find({"authorToken": userToken})]
-    userReviews = [review for review in Database.Reviews.find({"authorToken": userToken})]
+    userFits = collectionToList(Database.Fits.find({"authorToken": userToken}))
+    userReviews = collectionToList(Database.Reviews.find({"authorToken": userToken}))
 
     return {
         "fits": len(userFits),

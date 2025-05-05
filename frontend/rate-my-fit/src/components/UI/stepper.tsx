@@ -24,7 +24,7 @@ const Stepper = ({ length, step, setter }: { length: number, step: number, sette
                 </Button>
             }
         />
-    )
+    );
 };
 
 export default Stepper;

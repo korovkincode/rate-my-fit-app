@@ -86,7 +86,7 @@ const Profile = () => {
                 }
                 setItemsData(tempItemsData);
             }
-        }
+        };
 
         fetchUser();
         fetchFits();
@@ -175,6 +175,6 @@ const Profile = () => {
             </Container>
         </>
     );
-}
+};
 
 export default Profile;

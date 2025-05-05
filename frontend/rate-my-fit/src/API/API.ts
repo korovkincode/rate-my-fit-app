@@ -27,4 +27,4 @@ export const APICall = async (requestParams: RequestParams) => {
         status: response.status,
         ...responseJSON
     };
-}
+};

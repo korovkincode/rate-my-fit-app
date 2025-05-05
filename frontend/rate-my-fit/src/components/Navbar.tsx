@@ -9,6 +9,7 @@ import { Pulse } from './UI/animations';
 import FitForm from './FitForm';
 import { SnackbarStatus } from '../types/UI';
 import Snackbar from './UI/snackbar';
+import ItemForm from './ItemForm';
 
 const MenuSlotProps = {
     paper: {
@@ -76,7 +77,7 @@ const Navbar = () => {
         });
         secureLocalStorage.setItem('username', '');
         setUserMenuEl(null);
-    }
+    };
 
     const [snackbarStatus, setSnackbarStatus] = useState<SnackbarStatus>({
         open: false, message: '', color: 'info'
@@ -197,9 +198,14 @@ const Navbar = () => {
                     </Menu>
                 </Toolbar>
             </AppBar>
-            <Modal keepMounted open={fitFormOpen} onClose={() => setFitFormOpen(false)}>
+            <Modal open={fitFormOpen} onClose={() => setFitFormOpen(false)}>
                 <Box sx={ModalStyles}>
                     <FitForm actionType="add" openSetter={setFitFormOpen} snackbarSetter={setSnackbarStatus} />
+                </Box>
+            </Modal>
+            <Modal open={itemFormOpen} onClose={() => setItemFormOpen(false)}>
+                <Box sx={ModalStyles}>
+                    <ItemForm actionType="add" openSetter={setItemFormOpen} snackbarSetter={setSnackbarStatus} />
                 </Box>
             </Modal>
             <Snackbar status={snackbarStatus} setStatus={setSnackbarStatus} />

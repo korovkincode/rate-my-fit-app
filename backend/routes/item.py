@@ -83,3 +83,13 @@ async def getBrandItems(brandName: str, start: int = None, limit: int = None) ->
         "message": "Successful retrieving",
         "data": brandItemsData
     }
+
+
+@router.get("/all/brands", response_model=None)
+async def getAllBrands() -> dict:
+    allBrands = utils.collectionToList(Database.Items.distinct("brand"))
+
+    return {
+        "message": "Successful retrieving",
+        "data": allBrands
+    }

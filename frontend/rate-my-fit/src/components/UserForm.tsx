@@ -1,6 +1,6 @@
 import { useContext, useState, FormEvent } from 'react';
 import { Box, Grid, TextField, Button } from '@mui/material';
-import { FormType, Form } from '../types/user';
+import { Form, FormType } from '../types/user';
 import { SnackbarStatus } from '../types/UI';
 import { addUser, authUser } from '../API/user';
 import { AuthContext } from '../context';

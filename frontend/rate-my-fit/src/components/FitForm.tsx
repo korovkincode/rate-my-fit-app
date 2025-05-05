@@ -58,14 +58,19 @@ const FitForm = ({ actionType, openSetter, snackbarSetter }: {
         const requestBody = {
             userCredentials: userCredentials, title: fitData.title, description: fitData.description,
             date: getTodayDate(), itemsID: [], fitID: null, authorToken: null, picnames: null
-        }
+        };
         const formData = new FormData();
         formData.append('fitData', JSON.stringify(requestBody));
         fitData.pics.forEach((pic, index) => {
             formData.append('pics', new File([pic], pic.name));
         });
 
-        const formResponse = await addFit(formData);
+        let formResponse;
+        if (actionType === 'add') {
+            formResponse = await addFit(formData);
+        } else if (actionType == 'update') {
+
+        }
 
         if (formResponse.status !== 200) {
             snackbarSetter({
@@ -117,7 +122,7 @@ const FitForm = ({ actionType, openSetter, snackbarSetter }: {
                         sx={{ mt: 1, borderRadius: 6 }}
                     >
                         Upload pics
-                        <input type="file" multiple hidden onChange={(e) => handleFile(e)} />
+                        <input type="file" multiple hidden onChange={e => handleFile(e)} />
                     </Button>
                 </Grid>
                 {fitData.pics.length > 0 && (

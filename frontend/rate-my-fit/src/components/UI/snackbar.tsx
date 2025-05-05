@@ -28,6 +28,6 @@ const Snackbar = ({ status, setStatus }: { status: SnackbarStatus, setStatus: Di
             </Alert>
         </SnackbarMUI>
     );
-}
+};
 
 export default Snackbar;

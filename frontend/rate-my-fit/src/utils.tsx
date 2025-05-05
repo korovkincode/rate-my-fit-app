@@ -6,7 +6,7 @@ export const getCredentials = () => {
     const storedCredentials = secureLocalStorage.getItem('userCredentials');
     if (storedCredentials === null) {
         return {
-            userToken: '', secretToken: ''
+            userToken: '', secretToken: '', reloader: 0
         };
     }
     return storedCredentials as UserCredentials;

@@ -1,7 +1,16 @@
 import { APICall } from './API';
+import { Form } from '../types/item';
 
-export const addItem = () => {
+export const addItem = async (itemData: Form) => {
+    const response = await APICall({
+        method: 'POST',
+        path: '/item/add',
+        headers: null,
+        body: itemData,
+        multipart: false
+    });
 
+    return response;
 };
 
 export const getItem = async (itemID: string) => {
@@ -22,4 +31,16 @@ export const updateItem = () => {
 
 export const getBrandItems = () => {
 
+};
+
+export const getAllBrands = async () => {
+    const response = await APICall({
+        method: 'GET',
+        path: '/item/all/brands',
+        headers: null,
+        body: null,
+        multipart: false
+    });
+
+    return response;
 };
