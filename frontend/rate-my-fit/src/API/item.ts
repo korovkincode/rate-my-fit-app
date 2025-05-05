@@ -6,10 +6,11 @@ export const addItem = () => {
 
 export const getItem = async (itemID: string) => {
     const response = await APICall({
-        'method': 'GET',
-        'path': `/item/${itemID}`,
-        'headers': null,
-        'body': null
+        method: 'GET',
+        path: `/item/${itemID}`,
+        headers: null,
+        body: null,
+        multipart: false
     });
 
     return response;

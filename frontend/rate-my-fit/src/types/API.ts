@@ -1,4 +1,4 @@
-export type RequestParams = {
+export type RequestParams = { 
     method: 'GET' | 'POST' | 'PUT' | 'DELETE',
     path: string,
     headers: {
@@ -6,5 +6,6 @@ export type RequestParams = {
     } | null,
     body: {
         [key: string]: any
-    } | null
+    } | null,
+    multipart: boolean
 };

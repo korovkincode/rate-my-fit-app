@@ -7,16 +7,13 @@ const Signup = () => {
     return (
         <Container maxWidth="xs">
 			<Box sx={{
-				marginTop: 8,
-				display: 'flex',
-				flexDirection: 'column',
-				alignItems: 'center' }}
-            >
+				marginTop: 8, display: 'flex', flexDirection: 'column', alignItems: 'center'
+			}}>
 				
 				<Avatar sx={{ m: 1, bgcolor: 'primary.main' }}>
 					<LockOutlinedIcon />
 				</Avatar>
-				<Typography component="h1" variant="h5">
+				<Typography component="h1" variant="h5" sx={{ fontWeight: 700 }}>
 					Login
 				</Typography>
 				<UserForm actionType="login" />

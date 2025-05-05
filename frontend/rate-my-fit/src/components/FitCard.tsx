@@ -1,13 +1,14 @@
 import { useState, useRef } from 'react';
 import { Fit } from '../types/fit';
 import { Item } from '../types/item';
-import { Card, CardHeader, Avatar, CardMedia, MobileStepper, Button, IconButton, Drawer, CardActions } from '@mui/material';
-import { KeyboardArrowLeft, KeyboardArrowRight, KeyboardArrowDown } from '@mui/icons-material';
+import { Card, CardHeader, Avatar, CardMedia, IconButton, Drawer, CardActions } from '@mui/material';
+import { KeyboardArrowDown } from '@mui/icons-material';
 import { API_URL } from '../API/API';
 import { formatDate } from '../utils';
 import { Link as LinkDOM } from 'react-router-dom';
 import ItemsTable from './ItemsTable';
-import { BounceDown, Shake } from './animations';
+import { BounceDown, Shake } from './UI/animations';
+import Stepper from './UI/stepper';
 
 const FitCard = ({ fitData, itemsData, usernamesData, authorPfpLink }: {
     fitData: Fit, itemsData: {[itemID: string]: Item},
@@ -18,7 +19,7 @@ const FitCard = ({ fitData, itemsData, usernamesData, authorPfpLink }: {
         throw new Error('Author token is not defined');
     }
 
-    const [imgIndex, setImgIndex] = useState<number>(0);
+    const [galleryIndex, setGalleryIndex] = useState<number>(0);
 
     const [itemsOpen, setItemsOpen] = useState<boolean>(false);
     const fitContainerRef = useRef(null);
@@ -60,8 +61,8 @@ const FitCard = ({ fitData, itemsData, usernamesData, authorPfpLink }: {
                     />
                     <CardMedia        
                         component="img"
-                        image={fitData.picnames ? `${API_URL}/static/${fitData.picnames[imgIndex]}` : ''}
-                        alt={`${fitData.title} - ${imgIndex + 1}`}
+                        image={fitData.picnames ? `${API_URL}/static/${fitData.picnames[galleryIndex]}` : ''}
+                        alt={`${fitData.title} - ${galleryIndex + 1}`}
                     />
                 </LinkDOM>
                 <Drawer
@@ -83,26 +84,7 @@ const FitCard = ({ fitData, itemsData, usernamesData, authorPfpLink }: {
                     <ItemsTable itemsData={itemsData} />
                 </Drawer>
             </Card>
-            <MobileStepper
-                variant="dots" steps={fitData.picnames?.length || 0} position="static"
-                activeStep={imgIndex} sx={{ flexGrow: 1 }}
-                nextButton={
-                    <Button 
-                        size="small" onClick={() => setImgIndex(imgIndex + 1)}
-                        disabled={imgIndex === ((fitData.picnames?.length ?? 0) - 1)}
-                    >
-                        <KeyboardArrowRight />
-                    </Button>
-                }
-                backButton={
-                <Button
-                    size="small" onClick={() => setImgIndex(imgIndex - 1)}
-                    disabled={imgIndex === 0}
-                >
-                    <KeyboardArrowLeft />
-                </Button>
-                }
-            />
+            <Stepper length={fitData.picnames ? fitData.picnames.length : 0} step={galleryIndex} setter={setGalleryIndex} />
         </>
     );
 };

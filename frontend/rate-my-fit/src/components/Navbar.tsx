@@ -1,11 +1,14 @@
-import { useState, MouseEvent, useContext, useEffect } from 'react';
-import { AppBar, Container, Toolbar, Typography, IconButton, Menu, MenuItem, ListItemIcon, Avatar } from '@mui/material';
+import { useState, MouseEvent, useContext, useEffect, Dispatch, SetStateAction } from 'react';
+import { AppBar, Container, Toolbar, Typography, IconButton, Menu, MenuItem, ListItemIcon, Avatar, Modal, Box } from '@mui/material';
 import { Settings, Logout, Login, Person, PersonAdd, Add, AddAPhoto, Checkroom } from '@mui/icons-material';
 import { Link as LinkDOM } from 'react-router-dom';
 import { AuthContext } from '../context';
 import secureLocalStorage from 'react-secure-storage';
 import { getUserPfpDirect } from '../API/user';
-import { Pulse } from './animations';
+import { Pulse } from './UI/animations';
+import FitForm from './FitForm';
+import { SnackbarStatus } from '../types/UI';
+import Snackbar from './UI/snackbar';
 
 const MenuSlotProps = {
     paper: {
@@ -33,7 +36,23 @@ const MenuSlotProps = {
             },
         },
     }
-}
+};
+
+const ModalStyles = {
+    overflow: 'auto',
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    minWidth: '350px',
+    maxWidth: '400px',
+    maxHeight: '100vh',
+    bgcolor: '#D65076',
+    border: '2px solid #000',
+    boxShadow: 24,
+    p: 4,
+    borderRadius: 10
+};
 
 const Navbar = () => {
     const authContext = useContext(AuthContext);
@@ -51,9 +70,33 @@ const Navbar = () => {
         fetchPfp();
     }, [userCredentials, setUserCredentials]);
     
+    const handleLogout = () => {
+        setUserCredentials({
+            'userToken': '', 'secretToken': '', reloader: 0
+        });
+        secureLocalStorage.setItem('username', '');
+        setUserMenuEl(null);
+    }
+
+    const [snackbarStatus, setSnackbarStatus] = useState<SnackbarStatus>({
+        open: false, message: '', color: 'info'
+    });
+
     const [addMenuEl, setAddMenuEl] = useState<null | HTMLElement>(null);
     const handleAddMenu = (event: MouseEvent<HTMLElement>) => {
         setAddMenuEl(event.currentTarget);
+    };
+
+    const addMenuChecker = (setter: Dispatch<SetStateAction<boolean>>) => {
+        setAddMenuEl(null);
+
+        if (userCredentials.userToken === '') {
+            setSnackbarStatus({
+                open: true, message: 'You have to be authorized for this action', color: 'error'
+            });
+        } else {
+            setter(true);
+        }
     };
 
     const [userMenuEl, setUserMenuEl] = useState<null | HTMLElement>(null);
@@ -61,22 +104,12 @@ const Navbar = () => {
         setUserMenuEl(event.currentTarget);
     };
 
-    const handleLogout = () => {
-        setUserCredentials({
-            'userToken': '', 'secretToken': ''
-        });
-        secureLocalStorage.setItem('username', '');
-        setUserMenuEl(null);
-    }
+    const [fitFormOpen, setFitFormOpen] = useState<boolean>(false);
+    const [itemFormOpen, setItemFormOpen] = useState<boolean>(false);
 
     return (
-        <Container sx={{
-            pl: 0, r: 0
-        }}>
-            <AppBar position="static" sx={{
-                //borderBottomLeftRadius: 20, borderBottomRightRadius: 20
-                borderRadius: 10
-            }}>
+        <Container sx={{ pl: 0, r: 0 }}>
+            <AppBar position="static" sx={{ borderRadius: 10 }}>
                 <Toolbar>
                     <Typography variant="h5" component="div" sx={{ fontWeight: 700, flexGrow: 1 }}>
                         📊 FitRater
@@ -149,13 +182,13 @@ const Navbar = () => {
                         transformOrigin={{ horizontal: 'right', vertical: 'top' }}
                         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
                     >
-                        <MenuItem onClick={() => setAddMenuEl(null)}>
+                        <MenuItem onClick={() => addMenuChecker(setFitFormOpen)}>
                             <ListItemIcon>
                                 <AddAPhoto fontSize="small" />
                             </ListItemIcon>
                             Fit
                         </MenuItem>
-                        <MenuItem onClick={() => setAddMenuEl(null)}>
+                        <MenuItem onClick={() => addMenuChecker(setItemFormOpen)}>
                             <ListItemIcon>
                                 <Checkroom fontSize="small" />
                             </ListItemIcon>
@@ -164,6 +197,12 @@ const Navbar = () => {
                     </Menu>
                 </Toolbar>
             </AppBar>
+            <Modal keepMounted open={fitFormOpen} onClose={() => setFitFormOpen(false)}>
+                <Box sx={ModalStyles}>
+                    <FitForm actionType="add" openSetter={setFitFormOpen} snackbarSetter={setSnackbarStatus} />
+                </Box>
+            </Modal>
+            <Snackbar status={snackbarStatus} setStatus={setSnackbarStatus} />
         </Container>
     );
 };

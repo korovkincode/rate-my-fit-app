@@ -32,3 +32,23 @@ export const getTotal = (items: Item[]) => {
     items.forEach(item => total += item.price);
     return total;
 }
+
+export const capitalize = (s: string) => {
+    return s[0].toUpperCase() + s.slice(1);
+}
+
+export const lastElement = (a: Array<any>) => {
+    return a[a.length - 1];
+}
+
+export const formatNumber = (n: number) => {
+    return `${Math.floor(n / 10)}${n % 10}`;
+}
+
+export const getTodayDate = () => {
+    const date = new Date();
+    const day = formatNumber(date.getDate())
+    const month = formatNumber(date.getMonth());
+
+    return `${day}-${month}-${date.getFullYear()}`;
+}

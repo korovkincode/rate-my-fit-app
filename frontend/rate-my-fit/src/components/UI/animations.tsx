@@ -1,4 +1,9 @@
 import { keyframes } from '@emotion/react';
+import Slide, { SlideProps } from '@mui/material/Slide';
+
+export const SlideTransition = (
+    props: SlideProps, direction: 'up' | 'left' | 'right' | 'down' | undefined
+) => <Slide {...props} direction={direction ? direction : 'up'} />;
 
 export const Pulse = (scale: number) => keyframes`
     0% {

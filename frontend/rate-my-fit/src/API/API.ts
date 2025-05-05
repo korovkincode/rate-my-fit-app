@@ -6,11 +6,12 @@ export const APICall = async (requestParams: RequestParams) => {
     const response = await fetch(API_URL + requestParams.path, {
         method: requestParams.method,
         headers: {
+            "Accept": "*/*",
             "Access-Control-Allow-Origin": "*",
-            "Content-Type": "application/json",
+            ...(requestParams.multipart ? {} : {"Content-Type": "application/json"}),
             ...requestParams.headers
         },
-        body: requestParams.body ? JSON.stringify(requestParams.body) : null
+        body: requestParams.body ? (requestParams.multipart ? requestParams.body as FormData : JSON.stringify(requestParams.body)) : null
     });
 
     const responseJSON = await response.json();

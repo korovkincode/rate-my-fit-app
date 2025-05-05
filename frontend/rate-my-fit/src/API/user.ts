@@ -1,23 +1,25 @@
 import { APICall, API_URL } from './API';
 import { Form } from '../types/user';
 
-export const signupUser = async (userData: Form) => {
+export const addUser = async (userData: Form) => {
     const response = await APICall({
         method: 'POST',
         path: '/user/add',
         headers: null,
-        body: userData
+        body: userData,
+        multipart: false
     });
 
     return response;
 };
 
-export const loginUser = async (userData: Form) => {
+export const authUser = async (userData: Form) => {
     const response = await APICall({
         method: 'POST',
         path: '/user/auth',
         headers: null,
-        body: userData
+        body: userData,
+        multipart: false
     });
 
     return response;
@@ -30,7 +32,8 @@ export const getUser = async (userID: string, secretToken: string | null) => {
         headers: secretToken ? {
             secretToken: secretToken
         } : null,
-        body: null
+        body: null,
+        multipart: false
     });
 
     return response;
@@ -41,7 +44,8 @@ export const updateUser = async (userData: Form) => {
         method: 'PUT',
         path: '/user/update',
         headers: null,
-        body: userData
+        body: userData,
+        multipart: false
     });
 
     return response;
@@ -52,7 +56,8 @@ export const getUserPfp = async (userID: string) => {
         method: 'GET',
         path: `/user/${userID}/pfp`,
         headers: null,
-        body: null
+        body: null,
+        multipart: false
     });
 
     return response;

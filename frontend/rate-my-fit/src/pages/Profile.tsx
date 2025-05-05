@@ -90,7 +90,7 @@ const Profile = () => {
 
         fetchUser();
         fetchFits();
-    }, [userID]);
+    }, [userID, userCredentials]);
 
     useEffect(() => {
         setUserDataLoaded(userData !== null && pfpLink !== null);
