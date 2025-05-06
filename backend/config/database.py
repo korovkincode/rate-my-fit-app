@@ -1,6 +1,7 @@
 from dotenv import load_dotenv
-import os
 from pymongo import MongoClient
+from pymongo.operations import SearchIndexModel
+import os
 import json
 
 
@@ -28,3 +29,9 @@ class Database:
         if replace:
             cls.Items.delete_many({})
         cls.Items.insert_many(allItemsData)
+
+    
+    @classmethod
+    def createIndices(cls, indexModel: SearchIndexModel, collections: list[str]):
+        for collection in collections:
+            cls.DB[collection].create_search_index(model=indexModel)

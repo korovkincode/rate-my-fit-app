@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
+from pymongo.operations import SearchIndexModel
 from config.database import Database
 from routes.user import router as UserRouter
 from routes.fit import router as FitRouter
@@ -25,14 +26,28 @@ app.add_middleware(
 )
 
 UPDATE_ITEMS = False
+REPLACE_ITEMS = False
 
+CREATE_INDICES = False
+INDEX_MODEL = SearchIndexModel(
+    definition={
+        "mappings": {
+            "dynamic": True
+        },
+    }
+)
+TARGET_COLLECTIONS = [
+    "Users", "Fits", "Items"
+]
 
 @app.on_event("startup")
 async def startDB():
     Database.connect()
 
     if UPDATE_ITEMS:
-        Database.updateItems(replace=1)
+        Database.updateItems(replace=REPLACE_ITEMS)
+    if CREATE_INDICES:
+        Database.createIndices(INDEX_MODEL, TARGET_COLLECTIONS)
 
 
 @app.get("/", tags=["Root"])

@@ -89,10 +89,10 @@ def getUserStats(userID: str) -> dict:
     else:
         userToken = userID
     
-    userFits = collectionToList(Database.Fits.find({"authorToken": userToken}))
-    userReviews = collectionToList(Database.Reviews.find({"authorToken": userToken}))
+    userFits = Database.Fits.find({"authorToken": userToken})
+    userReviews = Database.Reviews.find({"authorToken": userToken})
 
     return {
-        "fits": len(userFits),
-        "reviews": len(userReviews)
+        "fits": userFits.count(),
+        "reviews": userReviews.count()
     }
