@@ -93,3 +93,32 @@ async def getAllBrands() -> dict:
         "message": "Successful retrieving",
         "data": allBrands
     }
+
+
+@router.get("/search/name", response_model=None)
+async def searchItem(itemName: str, limit: int = 15) -> dict:
+    pipeline = [
+        {
+            "$search": {
+                "index": "default",
+                "text": {
+                    "query": itemName,
+                    "path": ["name"]
+                }
+            }
+        },
+        {
+            "$limit": limit
+        },
+        {
+            "$project": {
+                "_id": 0
+            }
+        }
+    ]
+    queryItems = Database.Items.aggregate(pipeline)
+
+    return {
+        "message": "Successful retrieving",
+        "data": utils.collectionToList(queryItems)
+    }
