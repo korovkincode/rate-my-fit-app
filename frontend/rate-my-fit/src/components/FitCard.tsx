@@ -10,11 +10,14 @@ import ItemsTable from './ItemsTable';
 import { BounceDown, Shake } from './UI/animations';
 import Stepper from './UI/stepper';
 
-const FitCard = ({ fitData, itemsData, usernamesData, authorPfpLink }: {
-    fitData: Fit, itemsData: {[itemID: string]: Item},
-    usernamesData: {[userID: string]: string}, authorPfpLink: string
-}) => {
-    
+interface FitCardProps {
+    fitData: Fit,
+    itemsData: {[itemID: string]: Item},
+    usernamesData: {[userID: string]: string},
+    authorPfpLink: string
+};
+
+const FitCard = ({ fitData, itemsData, usernamesData, authorPfpLink }: FitCardProps) => {
     if (!fitData.authorToken) {
         throw new Error('Author token is not defined');
     }

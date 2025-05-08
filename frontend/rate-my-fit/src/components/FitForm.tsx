@@ -11,10 +11,13 @@ import { Item } from '../types/item';
 import { searchItemName } from '../API/item';
 import ItemsTable from './ItemsTable';
 
-const FitForm = ({ actionType, openSetter, snackbarSetter }: {
-    actionType: FormType, openSetter: Dispatch<SetStateAction<boolean>>, snackbarSetter: Dispatch<SetStateAction<SnackbarStatus>>
-}) => {
+interface FitFormProps {
+    actionType: FormType,
+    openSetter: Dispatch<SetStateAction<boolean>>,
+    snackbarSetter: Dispatch<SetStateAction<SnackbarStatus>>
+};
 
+const FitForm = ({ actionType, openSetter, snackbarSetter }: FitFormProps) => {
     const authContext = useContext(AuthContext);
     if (!authContext) {
         throw new Error('AuthContext is not defined');

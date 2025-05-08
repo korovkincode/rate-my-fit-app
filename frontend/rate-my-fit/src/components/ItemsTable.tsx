@@ -3,9 +3,14 @@ import { Item } from '../types/item';
 import ItemCard from './ItemCard';
 import { getTotal } from '../utils';
 
-const ItemsTable = ({ itemsData, useType, itemClick, itemRemove }: {
-    itemsData: {[itemID: string]: Item}, useType: string, itemClick: Function, itemRemove: Function | null
-}) => (
+interface ItemsTableProps {
+    itemsData: {[itemID: string]: Item},
+    useType: string,
+    itemClick: Function,
+    itemRemove: Function | null
+};
+
+const ItemsTable = ({ itemsData, useType, itemClick, itemRemove }: ItemsTableProps) => (
     <List sx={{ width: '100%', bgcolor: '#FFFFFF' }}>
         {Object.values(itemsData).map((item, index) =>
             <>

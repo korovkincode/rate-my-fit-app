@@ -6,7 +6,7 @@ interface ItemCardProps {
     itemData: Item,
     itemClick: Function,
     itemRemove: Function | null
-}
+};
 
 const ItemCard = ({ itemData, itemClick, itemRemove }: ItemCardProps) => (
     <ListItem

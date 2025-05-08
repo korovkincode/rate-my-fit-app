@@ -8,7 +8,11 @@ import secureLocalStorage from 'react-secure-storage';
 import Snackbar from './UI/snackbar';
 import { capitalize } from '../utils';
 
-const UserForm = ({ actionType }: { actionType: FormType }) => {
+interface UserFormProps {
+    actionType: FormType
+};
+
+const UserForm = ({ actionType }: UserFormProps) => {
     const [userData, setUserData] = useState<Form>({
         username: '', password: '', bio: ''
     });

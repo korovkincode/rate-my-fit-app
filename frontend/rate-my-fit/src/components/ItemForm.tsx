@@ -6,10 +6,13 @@ import { Close, Checkroom, Visibility, VisibilityOff } from '@mui/icons-material
 import { capitalize } from '../utils';
 import { addItem, getAllBrands } from '../API/item';
 
-const ItemForm = ({ actionType, openSetter, snackbarSetter }: {
-    actionType: FormType, openSetter: Dispatch<SetStateAction<boolean>>, snackbarSetter: Dispatch<SetStateAction<SnackbarStatus>>
-}) => {
+interface ItemFormProps {
+    actionType: FormType,
+    openSetter: Dispatch<SetStateAction<boolean>>,
+    snackbarSetter: Dispatch<SetStateAction<SnackbarStatus>>
+};
 
+const ItemForm = ({ actionType, openSetter, snackbarSetter }: ItemFormProps) => {
     const [itemData, setItemData] = useState<Form>({
         brand: '', name: '', img: '', price: 0, category: null
     });
