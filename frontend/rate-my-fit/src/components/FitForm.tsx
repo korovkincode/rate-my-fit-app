@@ -241,9 +241,13 @@ const FitForm = ({ actionType, openSetter, snackbarSetter }: FitFormProps) => {
                 {queryItems && queryItems.length > 0 &&
                     <Grid size={{ xs: 12 }}>
                         <Paper sx={{
-                            bgcolor: '#FFFFFF', width: '350px', maxHeight: '250px', overflow: 'auto', borderRadius: 6, border: '1px solid #000'
+                            bgcolor: 'custom.white', width: '350px', maxHeight: '250px',
+                            overflow: 'auto', borderRadius: 6, border: '1px solid #000'
                         }}>
-                            <ItemsTable itemsData={convertItemsList(queryItems)} useType='fitForm-search' itemClick={chooseItem} itemRemove={null} />
+                            <ItemsTable
+                                itemsData={convertItemsList(queryItems)} useType='fitForm-search'
+                                itemClick={chooseItem} itemRemove={null}
+                            />
                         </Paper>
                     </Grid>
                 }
@@ -253,14 +257,21 @@ const FitForm = ({ actionType, openSetter, snackbarSetter }: FitFormProps) => {
                             Fit items:
                         </Typography>
                         <Paper sx={{
-                            bgcolor: '#FFFFFF', width: '350px', maxHeight: '250px', overflow: 'auto', borderRadius: 6, border: '1px solid #000', mt: 2
+                            bgcolor: 'custom.white', width: '350px', maxHeight: '250px',
+                            overflow: 'auto', borderRadius: 6, border: '1px solid #000', mt: 2
                         }}>
-                            <ItemsTable itemsData={itemsCache} useType='fitForm-added' itemClick={chooseItem} itemRemove={removeItem} />
+                            <ItemsTable
+                                itemsData={itemsCache} useType='fitForm-added'
+                                itemClick={chooseItem} itemRemove={removeItem} 
+                            />
                         </Paper>
                     </Grid>
                 }
             </Grid>
-            <Button type="submit" variant="contained" onClick={handleForm} sx={{ width: '70%', borderRadius: 3, mt: 3, mb: 2 }}>
+            <Button
+                type="submit" variant="contained"
+                onClick={handleForm} sx={{ width: '70%', borderRadius: 3, mt: 3, mb: 2 }}
+            >
                 {capitalize(actionType)} fit
             </Button>
         </Box>

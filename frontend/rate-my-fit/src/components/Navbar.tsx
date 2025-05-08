@@ -48,7 +48,7 @@ const ModalStyles = {
     minWidth: '350px',
     maxWidth: '400px',
     maxHeight: '100vh',
-    bgcolor: '#D65076',
+    bgcolor: 'custom.pink',
     border: '2px solid #000',
     boxShadow: 24,
     p: 4,

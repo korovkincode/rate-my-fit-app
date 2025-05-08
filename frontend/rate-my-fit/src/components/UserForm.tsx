@@ -21,7 +21,7 @@ const UserForm = ({ actionType }: UserFormProps) => {
     if (!authContext) {
         throw new Error('AuthContext is not defined');
     }
-    const [userCredentials, setUserCredentials] = authContext;
+    const [_, setUserCredentials] = authContext;
 
     const handleForm = async (event: FormEvent) => {
         event.preventDefault();
@@ -64,14 +64,16 @@ const UserForm = ({ actionType }: UserFormProps) => {
             <Grid container spacing={2} alignItems="center">
                 <Grid size={{ xs: 12 }}>
                     <TextField
-                        required value={userData.username} onChange={e => setUserData({...userData, username: e.target.value})}
+                        required value={userData.username}
+                        onChange={e => setUserData({...userData, username: e.target.value})}
                         fullWidth label="Username"
                         placeholder={actionType !== 'login' ? 'Choose a username' : 'Enter your username'}
                     />
                 </Grid>
                 <Grid size={{ xs: 12 }}>
                     <TextField
-                        required value={userData.password} onChange={e => setUserData({...userData, password: e.target.value})}
+                        required value={userData.password}
+                        onChange={e => setUserData({...userData, password: e.target.value})}
                         fullWidth label="Password" type="password"
                         placeholder={actionType !== 'login' ? 'Choose a password' : 'Enter your password'}
                     />

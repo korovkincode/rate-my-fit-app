@@ -1,5 +1,16 @@
 import { createTheme } from '@mui/material';
 
+declare module '@mui/material/styles' {
+    interface PaletteOptions {
+        custom?: {
+            black: string;
+            white: string;
+            gray: string;
+            pink: string;
+        };
+    }
+};
+
 const theme = createTheme({
     palette: {
         mode: 'dark',
@@ -8,7 +19,12 @@ const theme = createTheme({
         },
         primary: {
             'main': '#FFFFFF',
-            'dark': '#000000',
+        },
+        custom: {
+            black: '#000000',
+            white: '#FFFFFF',
+            gray: '#7A7A7A',
+            pink: '#D65076'
         }
     },
     components: {

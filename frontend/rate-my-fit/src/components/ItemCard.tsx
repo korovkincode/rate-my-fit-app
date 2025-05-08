@@ -28,7 +28,7 @@ const ItemCard = ({ itemData, itemClick, itemRemove }: ItemCardProps) => (
                 alt={`${itemData.brand} ${itemData.name}`} src={itemData.img}
             />
         </ListItemAvatar>
-        <ListItemText sx={{ ml: 4, color: '#000000' }}
+        <ListItemText sx={{ ml: 4, color: 'custom.black' }}
             primary={
                 <Typography sx={{ fontSize: '15px', fontWeight: 700 }}>
                     {itemData.brand}
@@ -36,10 +36,10 @@ const ItemCard = ({ itemData, itemClick, itemRemove }: ItemCardProps) => (
             }
             secondary={
                 <>
-                    <Typography sx={{ mt: 0, color: '#7A7A7A', fontSize: '15px', fontWeight: 400 }}>
+                    <Typography sx={{ mt: 0, color: 'custom.gray', fontSize: '15px', fontWeight: 400 }}>
                         {itemData.name}
                     </Typography>
-                    <Typography sx={{ mt: 1, color: '#000000', fontSize: '15px', fontWeight: 700 }}>
+                    <Typography sx={{ mt: 1, color: 'custom.black', fontSize: '15px', fontWeight: 700 }}>
                         {itemData.price}$
                     </Typography>
                 </>

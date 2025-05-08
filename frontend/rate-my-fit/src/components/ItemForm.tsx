@@ -17,7 +17,7 @@ const ItemForm = ({ actionType, openSetter, snackbarSetter }: ItemFormProps) => 
         brand: '', name: '', img: '', price: 0, category: null
     });
     const [brandsList, setBrandsList] = useState<string[]| null>(null);
-    const brandInput = useRef<HTMLInputElement>(null)
+    const brandInput = useRef<HTMLInputElement>(null);
     const [showPreview, setShowPreview] = useState<boolean>(false);
 
     useEffect(() => {
@@ -76,7 +76,7 @@ const ItemForm = ({ actionType, openSetter, snackbarSetter }: ItemFormProps) => 
             >
                 <Close />
             </IconButton>
-            <Avatar sx={{ bgcolor: 'primary.main', width: '64px', height: '64px', mt: 2 }}>
+            <Avatar sx={{ bgcolor: 'custom.white', width: '64px', height: '64px', mt: 2 }}>
                 <Checkroom />
             </Avatar>
             <Typography sx={{ mt: 2, fontWeight: 700 }} component="h1" variant="h5">
@@ -127,7 +127,8 @@ const ItemForm = ({ actionType, openSetter, snackbarSetter }: ItemFormProps) => 
                 </Grid>
                 <Grid size={{ xs: 12 }}>
                     <TextField
-                        required value={itemData.price} onChange={e => setItemData({...itemData, price: parseInt(e.target.value) || 0})}
+                        required value={itemData.price}
+                        onChange={e => setItemData({...itemData, price: parseInt(e.target.value) || 0})}
                         type="number" fullWidth label="Price" placeholder="Enter item price"
                     />
                 </Grid>
@@ -139,7 +140,8 @@ const ItemForm = ({ actionType, openSetter, snackbarSetter }: ItemFormProps) => 
                 </Grid>
             </Grid>
             <Button
-                type="submit" variant="contained" sx={{ width: '70%', borderRadius: 3, mt: 3, mb: 2 }}
+                type="submit" variant="contained"
+                sx={{ width: '70%', borderRadius: 3, mt: 3, mb: 2 }}
                 onClick={handleForm}
             >
                 {capitalize(actionType)}

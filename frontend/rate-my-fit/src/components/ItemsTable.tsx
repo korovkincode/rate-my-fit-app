@@ -11,7 +11,7 @@ interface ItemsTableProps {
 };
 
 const ItemsTable = ({ itemsData, useType, itemClick, itemRemove }: ItemsTableProps) => (
-    <List sx={{ width: '100%', bgcolor: '#FFFFFF' }}>
+    <List sx={{ width: '100%', bgcolor: 'custom.white' }}>
         {Object.values(itemsData).map((item, index) =>
             <>
                 <ItemCard key={index} itemData={item} itemClick={itemClick} itemRemove={itemRemove} />
@@ -25,14 +25,14 @@ const ItemsTable = ({ itemsData, useType, itemClick, itemRemove }: ItemsTablePro
         )}
         {useType === 'fitCard' &&
             <ListItem>
-                <ListItemText sx={{ color: '#000000' }}
+                <ListItemText sx={{ color: 'custom.black' }}
                     primary={
-                        <Typography sx={{ color: '#7A7A7A', fontSize: '15px', fontWeight: 500, display: 'inline' }}>
+                        <Typography sx={{ color: 'custom.gray', fontSize: '15px', fontWeight: 500, display: 'inline' }}>
                             Total:
                         </Typography>
                     }
                     secondary={
-                        <Typography sx={{ ml: 0.5, color: '#000000', fontSize: '15px', fontWeight: 700, display: 'inline' }}>
+                        <Typography sx={{ ml: 0.5, color: 'custom.black', fontSize: '15px', fontWeight: 700, display: 'inline' }}>
                             {getTotal(Object.values(itemsData))}$
                         </Typography>
                     }

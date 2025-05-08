@@ -35,12 +35,12 @@ const FitCard = ({ fitData, itemsData, usernamesData, authorPfpLink }: FitCardPr
                 <CardActions
                     sx={{
                         justifyContent: 'center', height: '15px',
-                        bgcolor: '#FFFFFF', width: '40%',
+                        bgcolor: 'custom.white', width: '40%',
                         ml: 'auto', mr: 'auto',
                         borderBottomLeftRadius: 15, borderBottomRightRadius: 15
                     }}
                 >
-                    <IconButton onClick={() => setItemsOpen(true)} sx={{ color: '#000000' }}>
+                    <IconButton onClick={() => setItemsOpen(true)} sx={{ color: 'custom.black' }}>
                         <KeyboardArrowDown sx={{ animation: `${BounceDown(3)} 2s ease infinite` }} />
                     </IconButton>
                 </CardActions>
@@ -51,10 +51,7 @@ const FitCard = ({ fitData, itemsData, usernamesData, authorPfpLink }: FitCardPr
                                 <Avatar
                                     alt={usernamesData[fitData.authorToken]}
                                     src={authorPfpLink}
-                                    sx={{
-                                        mr: 0.5,
-                                        animation: `${Shake(1.1, 3)} 2s ease infinite`
-                                    }} 
+                                    sx={{ mr: 0.5, animation: `${Shake(1.1, 3)} 2s ease infinite` }} 
                                 />
                             </LinkDOM>
                         }
@@ -76,8 +73,7 @@ const FitCard = ({ fitData, itemsData, usernamesData, authorPfpLink }: FitCardPr
                     transitionDuration={{ appear: 100, enter: 500, exit: 500 }}
                     container={fitContainerRef.current}
                     ModalProps={{
-                        container: fitContainerRef.current,
-                        disablePortal: true
+                        container: fitContainerRef.current, disablePortal: true
                     }}
                     sx={{
                         position: 'absolute', 

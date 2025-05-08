@@ -2,7 +2,13 @@ import { Dispatch, SetStateAction } from 'react';
 import { MobileStepper, Button } from '@mui/material';
 import { KeyboardArrowRight, KeyboardArrowLeft } from '@mui/icons-material';
 
-const Stepper = ({ length, step, setter }: { length: number, step: number, setter: Dispatch<SetStateAction<number>> }) => {
+interface StepperProps {
+    length: number,
+    step: number,
+    setter: Dispatch<SetStateAction<number>>
+};
+
+const Stepper = ({ length, step, setter }: StepperProps) => {
     return (
         <MobileStepper
             variant="dots" steps={length} position="static"
