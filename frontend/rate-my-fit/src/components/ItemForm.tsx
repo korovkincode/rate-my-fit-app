@@ -1,4 +1,4 @@
-import { Dispatch, FormEvent, SetStateAction, useEffect, useState } from 'react';
+import { Dispatch, FormEvent, SetStateAction, useEffect, useState, useRef } from 'react';
 import { SnackbarStatus } from '../types/UI';
 import { Form, FormType } from '../types/item';
 import { Box, IconButton, Avatar, Typography, Grid, TextField, Button, Autocomplete, InputAdornment } from '@mui/material';
@@ -14,6 +14,7 @@ const ItemForm = ({ actionType, openSetter, snackbarSetter }: {
         brand: '', name: '', img: '', price: 0, category: null
     });
     const [brandsList, setBrandsList] = useState<string[]| null>(null);
+    const brandInput = useRef<HTMLInputElement>(null)
     const [showPreview, setShowPreview] = useState<boolean>(false);
 
     useEffect(() => {
@@ -81,8 +82,14 @@ const ItemForm = ({ actionType, openSetter, snackbarSetter }: {
             <Grid container spacing={2} alignItems="center" sx={{ mt: 3 }}>
                 <Grid size={{ xs: 12 }}>
                     <Autocomplete
-                        disablePortal options={brandsList || []} onChange={(e, value) => setItemData({...itemData, brand: value || ''})}
-                        renderInput={(params) => <TextField required {...params} label="Brand" />}
+                        ref={brandInput} freeSolo disablePortal
+                        options={brandsList || []} onChange={(_, value) => setItemData({...itemData, brand: value || ''})}
+                        renderInput={(params) =>
+                            <TextField
+                                required {...params} label="Brand"
+                                onChange={e => setItemData({...itemData, brand: (e.target as HTMLInputElement).value || ''})}
+                            />
+                        }
                     />
                 </Grid>
                 <Grid size={{ xs: 12 }}>

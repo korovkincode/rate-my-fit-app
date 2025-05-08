@@ -52,3 +52,11 @@ export const getTodayDate = () => {
 
     return `${day}-${month}-${date.getFullYear()}`;
 }
+
+export const convertItemsList = (items: Item[]) => {
+    const itemsMap: { [key: string]: Item } = {};
+    for (const item of items) {
+        itemsMap[item.itemID] = item;
+    }
+    return itemsMap;
+}

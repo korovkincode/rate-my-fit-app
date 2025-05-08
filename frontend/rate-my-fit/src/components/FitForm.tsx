@@ -1,12 +1,15 @@
-import { useContext, useState, Dispatch, SetStateAction, ChangeEvent, FormEvent } from 'react';
+import { useContext, useState, useRef, Dispatch, SetStateAction, ChangeEvent, FormEvent, MouseEvent } from 'react';
 import { AuthContext } from '../context';
 import { SnackbarStatus } from '../types/UI';
-import { Box, Avatar, Grid, Typography, TextField, Button, IconButton, Card, CardHeader, CardMedia, CardActions } from '@mui/material';
-import { AddAPhoto, Close, CloudUpload } from '@mui/icons-material';
+import { Box, Avatar, Grid, Typography, TextField, Button, IconButton, Card, CardHeader, CardMedia, CardActions, InputAdornment, Paper } from '@mui/material';
+import { AddAPhoto, Close, CloudUpload, Search } from '@mui/icons-material';
 import { Form, FormType } from '../types/fit';
-import { capitalize, lastElement, getTodayDate } from '../utils';
+import { capitalize, lastElement, getTodayDate, convertItemsList } from '../utils';
 import Stepper from './UI/stepper';
 import { addFit } from '../API/fit';
+import { Item } from '../types/item';
+import { searchItemName } from '../API/item';
+import ItemsTable from './ItemsTable';
 
 const FitForm = ({ actionType, openSetter, snackbarSetter }: {
     actionType: FormType, openSetter: Dispatch<SetStateAction<boolean>>, snackbarSetter: Dispatch<SetStateAction<SnackbarStatus>>
@@ -19,8 +22,10 @@ const FitForm = ({ actionType, openSetter, snackbarSetter }: {
     const [userCredentials, setUserCredentials] = authContext;
 
     const [fitData, setFitData] = useState<Form>({
-        title: '', description: null, pics: []
+        title: '', description: null, pics: [], itemsID: []
     });
+    const titleBar = useRef<HTMLInputElement>(null);
+    const descriptionBar = useRef<HTMLInputElement>(null);
 
     const [galleryIndex, setGalleryIndex] = useState<number>(0);
 
@@ -46,8 +51,62 @@ const FitForm = ({ actionType, openSetter, snackbarSetter }: {
         if (galleryIndex) setGalleryIndex(galleryIndex - 1);
     };
 
+    const searchBar = useRef<HTMLInputElement>(null);
+    const [queryItems, setQueryItems] = useState<Item[] | null>(null);
+    const [itemsCache, setItemsCache] = useState<{[itemID: string]: Item}>({});
+
+    const searchItems = async (event: MouseEvent<HTMLButtonElement>) => {
+        event.preventDefault();
+        const itemName = searchBar.current?.value;
+        if (!itemName) {
+            snackbarSetter({
+                open: true, message: 'Item name cannot be null', color: 'error'
+            });
+            return;
+        }
+
+        const searchRequest = await searchItemName(itemName, 200);
+        if (searchRequest.status !== 200) {
+            snackbarSetter({
+                open: true, message: searchRequest.description, color: 'error'
+            });
+            return;
+        }
+
+        setQueryItems(searchRequest.data);
+    };
+
+    const chooseItem = (itemData: Item) => {
+        setItemsCache({
+            ...itemsCache, [itemData.itemID]: itemData
+        });
+        setFitData({
+            ...fitData, itemsID: fitData.itemsID.concat([itemData.itemID])
+        });
+        setQueryItems(null);
+        snackbarSetter({
+            open: true, message: 'Successfully added the item', color: 'success'
+        });
+    };
+
+    const removeItem = (itemData: Item) => {
+        const itemIndex = fitData.itemsID.indexOf(itemData.itemID);
+        fitData.itemsID.splice(itemIndex, 1);
+        setFitData(fitData);
+
+        delete itemsCache[itemData.itemID];
+        setItemsCache(itemsCache);
+        
+        snackbarSetter({
+            open: true, message: 'Successfully removed the item', color: 'success'
+        });
+    };
+
     const handleForm = async (event: FormEvent) => {
         event.preventDefault();
+        fitData.title = titleBar.current?.value || '';
+        fitData.description = descriptionBar.current?.value || '';
+        setFitData(fitData);
         if (fitData.title === '' || fitData.pics.length === 0) {
             snackbarSetter({
                 open: true, message: 'Fill in all fields', color: 'error'
@@ -57,11 +116,11 @@ const FitForm = ({ actionType, openSetter, snackbarSetter }: {
 
         const requestBody = {
             userCredentials: userCredentials, title: fitData.title, description: fitData.description,
-            date: getTodayDate(), itemsID: [], fitID: null, authorToken: null, picnames: null
+            date: getTodayDate(), itemsID: fitData.itemsID
         };
         const formData = new FormData();
         formData.append('fitData', JSON.stringify(requestBody));
-        fitData.pics.forEach((pic, index) => {
+        fitData.pics.forEach((pic, _) => {
             formData.append('pics', new File([pic], pic.name));
         });
 
@@ -106,14 +165,14 @@ const FitForm = ({ actionType, openSetter, snackbarSetter }: {
             <Grid container spacing={2} alignItems="center" sx={{ mt: 3 }}>
                 <Grid size={{ xs: 12 }}>
                     <TextField
-                        required value={fitData.title} onChange={e => setFitData({...fitData, title: e.target.value})}
-                        fullWidth label="Title" placeholder={actionType === 'add' ? 'Choose a title' : 'Enter new title'}
+                        inputRef={titleBar} required fullWidth
+                        label="Title" placeholder={actionType === 'add' ? 'Choose a title' : 'Enter new title'}
                     />
                 </Grid>
                 <Grid size={{ xs: 12 }}>
                     <TextField
-                        value={fitData.description} onChange={e => setFitData({...fitData, description: e.target.value})}
-                        fullWidth label="Description" placeholder="Choose a description"
+                        inputRef={descriptionBar} fullWidth
+                        label="Description" placeholder="Choose a description"
                     />
                 </Grid>
                 <Grid size={{ xs: 12 }} sx={{ display: 'flex', justifyContent: 'center' }}>
@@ -127,6 +186,9 @@ const FitForm = ({ actionType, openSetter, snackbarSetter }: {
                 </Grid>
                 {fitData.pics.length > 0 && (
                     <>
+                        <Typography sx={{ mt: 2, fontSize: '20px' }}>
+                            Uploaded pics:
+                        </Typography>
                         <Box sx={{
                             display: 'flex', flexDirection: 'column', ml: 'auto', mr: 'auto'
                         }}>
@@ -142,8 +204,7 @@ const FitForm = ({ actionType, openSetter, snackbarSetter }: {
                                 />
                                 <CardActions sx={{ display: 'flex', justifyContent: 'flex-end' }}>
                                     <Button
-                                        color="error" variant="contained"
-                                        sx={{ borderRadius: 3, mr: 0.5 }}
+                                        color="error" variant="contained" sx={{ borderRadius: 3, mr: 0.5 }}
                                         onClick={() => removeFile(galleryIndex)}   
                                     >
                                         Delete
@@ -157,12 +218,47 @@ const FitForm = ({ actionType, openSetter, snackbarSetter }: {
                         </Box>
                     </>
                 )}
+                <Grid size={{ xs: 12 }} sx={{ mt: 2 }}>
+                    <TextField
+                        inputRef={searchBar} fullWidth
+                        label="Item name" placeholder="Search for the item name"
+                        slotProps={{
+                            input: {
+                                endAdornment: (
+                                    <InputAdornment position="end">
+                                        <IconButton edge="end" onClick={e => searchItems(e)}>
+                                            <Search />
+                                        </IconButton>
+                                    </InputAdornment>
+                                )
+                            }
+                        }}
+                    />
+                </Grid>
+                {queryItems && queryItems.length > 0 &&
+                    <Grid size={{ xs: 12 }}>
+                        <Paper sx={{
+                            bgcolor: '#FFFFFF', width: '350px', maxHeight: '250px', overflow: 'auto', borderRadius: 6, border: '1px solid #000'
+                        }}>
+                            <ItemsTable itemsData={convertItemsList(queryItems)} useType='fitForm-search' itemClick={chooseItem} itemRemove={null} />
+                        </Paper>
+                    </Grid>
+                }
+                {fitData.itemsID.length > 0 &&
+                    <Grid size={{ xs: 12 }}>
+                        <Typography sx={{ mt: 2, fontSize: '20px', alignSelf: 'flex-start' }}>
+                            Fit items:
+                        </Typography>
+                        <Paper sx={{
+                            bgcolor: '#FFFFFF', width: '350px', maxHeight: '250px', overflow: 'auto', borderRadius: 6, border: '1px solid #000', mt: 2
+                        }}>
+                            <ItemsTable itemsData={itemsCache} useType='fitForm-added' itemClick={chooseItem} itemRemove={removeItem} />
+                        </Paper>
+                    </Grid>
+                }
             </Grid>
-            <Button
-                type="submit" variant="contained" sx={{ width: '70%', borderRadius: 3, mt: 3, mb: 2 }}
-                onClick={handleForm}
-            >
-                {capitalize(actionType)}
+            <Button type="submit" variant="contained" onClick={handleForm} sx={{ width: '70%', borderRadius: 3, mt: 3, mb: 2 }}>
+                {capitalize(actionType)} fit
             </Button>
         </Box>
     );

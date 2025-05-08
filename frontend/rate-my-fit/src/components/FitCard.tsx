@@ -5,7 +5,7 @@ import { Card, CardHeader, Avatar, CardMedia, IconButton, Drawer, CardActions } 
 import { KeyboardArrowDown } from '@mui/icons-material';
 import { API_URL } from '../API/API';
 import { formatDate } from '../utils';
-import { Link as LinkDOM } from 'react-router-dom';
+import { Link as LinkDOM, useNavigate } from 'react-router-dom';
 import ItemsTable from './ItemsTable';
 import { BounceDown, Shake } from './UI/animations';
 import Stepper from './UI/stepper';
@@ -24,6 +24,8 @@ const FitCard = ({ fitData, itemsData, usernamesData, authorPfpLink }: {
     const [itemsOpen, setItemsOpen] = useState<boolean>(false);
     const fitContainerRef = useRef(null);
 
+    const navigate = useNavigate();
+    const itemRedirect = (itemData: Item) => navigate(`/item/${itemData.itemID}`);
     return (
         <>
             <Card sx={{ borderRadius: 5, boxShadow: 3, position: 'relative' }} ref={fitContainerRef}>
@@ -81,7 +83,7 @@ const FitCard = ({ fitData, itemsData, usernamesData, authorPfpLink }: {
                         }
                     }}
                 >
-                    <ItemsTable itemsData={itemsData} />
+                    <ItemsTable itemsData={itemsData} useType='fitCard' itemClick={itemRedirect} itemRemove={null} />
                 </Drawer>
             </Card>
             <Stepper length={fitData.picnames ? fitData.picnames.length : 0} step={galleryIndex} setter={setGalleryIndex} />

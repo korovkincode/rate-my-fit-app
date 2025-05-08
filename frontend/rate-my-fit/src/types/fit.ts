@@ -11,7 +11,8 @@ export type Fit = {
 export type Form = {
     title: string,
     description: string | null,
-    pics: File[]
+    pics: File[],
+    itemsID: string[]
 };
 
 export type FormType = 'add' | 'update';
