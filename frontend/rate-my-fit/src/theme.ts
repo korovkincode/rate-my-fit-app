@@ -36,6 +36,14 @@ const theme = createTheme({
                 },
             },
         },
+        MuiCardMedia: {
+            styleOverrides: {
+                img: {
+                    objectFit: 'contain',
+                    height: '100%',
+                },
+            },
+        }
     },
 });
 

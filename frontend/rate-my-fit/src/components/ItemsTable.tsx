@@ -25,7 +25,7 @@ const ItemsTable = ({ itemsData, useType, itemClick, itemRemove }: ItemsTablePro
         )}
         {useType === 'fitCard' &&
             <ListItem>
-                <ListItemText sx={{ color: 'custom.black' }}
+                <ListItemText sx={{ color: 'custom.black', mb: -1 }}
                     primary={
                         <Typography sx={{ color: 'custom.gray', fontSize: '15px', fontWeight: 500, display: 'inline' }}>
                             Total:

@@ -12,8 +12,16 @@ export const addFit = async (fitData: FormData) => {
     return response;
 };
 
-export const getFit = () => {
+export const getFit = async (fitID: string) => {
+    const response = await APICall({
+        method: 'GET',
+        path: `/fit/${fitID}`,
+        headers: null,
+        body: null,
+        multipart: false
+    });
 
+    return response;
 };
 
 export const updateFit = () => {

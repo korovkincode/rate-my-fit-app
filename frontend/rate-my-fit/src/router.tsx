@@ -2,11 +2,13 @@ import { Route, Routes } from 'react-router-dom';
 import Signup from './pages/Signup';
 import Login from './pages/Login';
 import Profile from './pages/Profile';
+import Fit from './pages/Fit';
 
 const PUBLIC_ROUTES = [
     {path: '/signup', component: Signup},
     {path: '/login', component: Login},
-    {path: '/user/:userID', component: Profile}
+    {path: '/user/:userID', component: Profile},
+    {path: '/fit/:fitID', component: Fit}
 ];
 
 const Router = () => {

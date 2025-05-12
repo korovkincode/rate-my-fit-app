@@ -109,8 +109,8 @@ const Navbar = () => {
     const [itemFormOpen, setItemFormOpen] = useState<boolean>(false);
 
     return (
-        <Container sx={{ pl: 0, r: 0 }}>
-            <AppBar position="static" sx={{ borderRadius: 10 }}>
+        <Container sx={{ pl: 0, pr: 0 }}>
+            <AppBar position="static" sx={{ borderRadius: {xs: '0 0 35px 35px', sm: 10} }}>
                 <Toolbar>
                     <Typography variant="h5" component="div" sx={{ fontWeight: 700, flexGrow: 1 }}>
                         📊 FitRater

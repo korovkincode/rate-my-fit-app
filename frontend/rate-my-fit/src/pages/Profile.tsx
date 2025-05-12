@@ -9,6 +9,7 @@ import { Item } from '../types/item';
 import FitCard from '../components/FitCard';
 import { getUserFits } from '../API/fit';
 import { getItem } from '../API/item';
+import { User } from '../types/user';
 
 const Profile = () => {
     const authContext = useContext(AuthContext);
@@ -26,15 +27,7 @@ const Profile = () => {
         throw new Error('User ID is not defined');
     }
 
-    const [userData, setUserData] = useState<{
-        username: string,
-        bio: string | null,
-        totalFits: number,
-        totalReviews: number,
-        userToken: string | null,
-        secretToken: string | null,
-        password: string | null,
-    } | null>(null);
+    const [userData, setUserData] = useState<User | null>(null);
     const [pfpLink, setPfpLink] = useState<string | null>(null);
     const [editMode, setEditMode] = useState(false);
     const [userFits, setUserFits] = useState<Fit[] | null>(null);

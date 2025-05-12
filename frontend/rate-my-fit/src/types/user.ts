@@ -11,3 +11,13 @@ export type Form = {
 };
 
 export type FormType = 'sign up' | 'login' | 'update';
+
+export type User = {
+    username: string,
+    bio: string | null,
+    totalFits: number,
+    totalReviews: number,
+    userToken: string | null,
+    secretToken: string | null,
+    password: string | null
+};

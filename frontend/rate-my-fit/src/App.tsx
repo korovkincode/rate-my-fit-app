@@ -20,7 +20,7 @@ const App = () => {
 			}]}
 		>
 			<BrowserRouter>
-				<Container maxWidth="lg">
+				<Container sx={{ paddingLeft: {xs: 0}, paddingRight: {xs: 0} }} maxWidth="lg">
 					<Navbar />
 					<Router />
 				</Container>
