@@ -5,14 +5,18 @@ import { KeyboardArrowRight, KeyboardArrowLeft } from '@mui/icons-material';
 interface StepperProps {
     length: number,
     step: number,
+    stickBottom: boolean
     setter: Dispatch<SetStateAction<number>>
 };
 
-const Stepper = ({ length, step, setter }: StepperProps) => {
+const Stepper = ({ length, step, stickBottom, setter }: StepperProps) => {
     return (
         <MobileStepper
-            variant="dots" steps={length} position="static"
-            activeStep={step} sx={{ bgcolor: 'transparent', flexGrow: 1 }}
+            variant="dots" steps={length}
+            activeStep={step} sx={{
+                pl: 0, pr: 0, bgcolor: 'transparent', flexGrow: 1,
+                ...(stickBottom && {position: 'absolute', bottom: 0})
+            }}
             nextButton={
                 <Button 
                     size="small" onClick={() => setter(step + 1)}

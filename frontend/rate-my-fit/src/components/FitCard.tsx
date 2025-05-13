@@ -84,8 +84,11 @@ const FitCard = ({ fitData, itemsData, usernamesData, authorPfpLink }: FitCardPr
                 >
                     <ItemsTable itemsData={itemsData} useType='fitCard' itemClick={itemRedirect} itemRemove={null} />
                 </Drawer>
+                <Stepper
+                    length={fitData.picnames ? fitData.picnames.length : 0} step={galleryIndex}
+                    stickBottom={true} setter={setGalleryIndex}
+                />
             </Card>
-            <Stepper length={fitData.picnames ? fitData.picnames.length : 0} step={galleryIndex} setter={setGalleryIndex} />
         </>
     );
 };
