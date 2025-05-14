@@ -4,13 +4,15 @@ import Signup from './pages/Signup';
 import Login from './pages/Login';
 import Profile from './pages/Profile';
 import Fit from './pages/Fit';
+import Search from './pages/Search';
 
 const PUBLIC_ROUTES = [
     {path: '/', component: Main},
     {path: '/signup', component: Signup},
     {path: '/login', component: Login},
     {path: '/user/:userID', component: Profile},
-    {path: '/fit/:fitID', component: Fit}
+    {path: '/fit/:fitID', component: Fit},
+    {path: '/search/:searchQuery', component: Search}
 ];
 
 const Router = () => {

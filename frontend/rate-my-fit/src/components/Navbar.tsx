@@ -1,6 +1,6 @@
 import { useState, MouseEvent, useContext, useEffect, Dispatch, SetStateAction } from 'react';
-import { AppBar, Container, Toolbar, Typography, IconButton, Menu, MenuItem, ListItemIcon, Avatar, Modal, Box } from '@mui/material';
-import { Settings, Logout, Login, Person, PersonAdd, Add, AddAPhoto, Checkroom } from '@mui/icons-material';
+import { AppBar, Container, Toolbar, Typography, IconButton, Menu, MenuItem, ListItemIcon, Avatar, Modal, Box, TextField, InputAdornment } from '@mui/material';
+import { Settings, Logout, Login, Person, PersonAdd, Add, AddAPhoto, Checkroom, Search } from '@mui/icons-material';
 import { Link as LinkDOM } from 'react-router-dom';
 import { AuthContext } from '../context';
 import secureLocalStorage from 'react-secure-storage';
@@ -10,6 +10,8 @@ import FitForm from './FitForm';
 import { SnackbarStatus } from '../types/UI';
 import Snackbar from './UI/snackbar';
 import ItemForm from './ItemForm';
+import { useTheme } from '@mui/material/styles';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 const MenuSlotProps = {
     paper: {
@@ -56,6 +58,9 @@ const ModalStyles = {
 };
 
 const Navbar = () => {
+    const theme = useTheme();
+    const smFlag = useMediaQuery(theme.breakpoints.down('md'));
+
     const authContext = useContext(AuthContext);
     if (!authContext) {
         throw new Error('AuthContext is not defined');
@@ -111,21 +116,58 @@ const Navbar = () => {
     return (
         <Container sx={{ pl: 0, pr: 0 }}>
             <AppBar position="static" sx={{ borderRadius: {xs: '0 0 20px 20px', sm: 10} }}>
-                <Toolbar>
-                    <Typography variant="h5" component="div" sx={{ fontWeight: 700, flexGrow: 1 }}>
-                        <LinkDOM to="/" style={{ color: 'inherit', textDecoration: 'none' }}>
-                            📊 FitRater
-                        </LinkDOM>
-                    </Typography>
-                    <IconButton size="large" onClick={handleAddMenu} color="success" sx={{ mr: 0 }}>
-                        <Add />
-                    </IconButton>
-                    <IconButton size="large" onClick={handleUserMenu} color="inherit" sx={{ mr: -1 }}>
-                        <Avatar src={pfpLink || ''} sx={{
-                            width: '45px', height: '45px',
-                            animation: `${Pulse(1.1)} 2s infinite`
-                        }} />
-                    </IconButton>
+                <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <Box sx={{ flex: 1 }}>
+                        <Typography variant="h5" component="div" sx={{ fontWeight: 700 }}>
+                            <LinkDOM to="/" style={{ color: 'inherit', textDecoration: 'none' }}>
+                                📊 FitRater
+                            </LinkDOM>
+                        </Typography>
+                    </Box>
+                    {!smFlag &&
+                        <Box sx={{ flex: 2, display: 'flex', justifyContent: 'center' }}>
+                            <TextField variant="outlined" size="medium"
+                                placeholder="Search for anything (fit, item, brand, etc...)"
+                                sx={{
+                                    width: '100%', backgroundColor: 'custom.black',
+                                    borderRadius: 5, boxShadow: 2,
+                                    '& .MuiOutlinedInput-root': {
+                                        height: 52, // Taller input
+                                        borderRadius: 5,
+                                        paddingRight: '8px',
+                                    },
+                                    '& .MuiOutlinedInput-notchedOutline': {
+                                        border: '1px solid #D65076',
+                                    }
+                                }}
+                                slotProps={{
+                                    input: {
+                                        startAdornment: (
+                                            <InputAdornment position="start">
+                                                <Search />
+                                            </InputAdornment>
+                                        )
+                                    }
+                                }}
+                            />
+                        </Box>
+                    }
+                    <Box sx={{ flex: 1, display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
+                        {smFlag &&
+                            <IconButton size="large" sx={{ mt: '5px', mr: 0, color: 'custom.pink' }}>
+                                <Search />
+                            </IconButton>
+                        }
+                        <IconButton size="large" onClick={handleAddMenu} color="success" sx={{ mr: 0 }}>
+                            <Add />
+                        </IconButton>
+                        <IconButton size="large" onClick={handleUserMenu} color="inherit" sx={{ mr: -1 }}>
+                            <Avatar src={pfpLink || ''} sx={{
+                                width: '45px', height: '45px',
+                                animation: `${Pulse(1.1)} 2s infinite`
+                            }} />
+                        </IconButton>
+                    </Box>
                     <Menu
                         id="user-menu-appbar" anchorEl={userMenuEl} keepMounted
                         open={Boolean(userMenuEl)} onClose={() => setUserMenuEl(null)}
