@@ -309,10 +309,7 @@ const Fit = () => {
                         />
                     }
                 </Stack>
-                <Divider
-                    variant="middle"
-                    sx={{ mt: 6, borderBottomWidth: 3 }}
-                />
+                <Divider variant="middle" sx={{ mt: 6, borderBottomWidth: 3 }} />
                 <Container maxWidth="sm">
                     {fitData && authorData && authorPfpLink && reviewsData && reviewersData && allDataLoaded
                     ?
