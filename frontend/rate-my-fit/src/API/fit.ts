@@ -39,3 +39,15 @@ export const getUserFits = async (userID: string) => {
 
     return response;
 };
+
+export const getAllFits = async (start: number, limit: number, sorting: string, direction: string) => {
+    const response = await APICall({
+        method: 'GET',
+        path: `/fit/all/?start=${start}&limit=${limit}&sorting=${sorting}&direction=${direction}`,
+        headers: null,
+        body: null,
+        multipart: false
+    });
+
+    return response;
+};

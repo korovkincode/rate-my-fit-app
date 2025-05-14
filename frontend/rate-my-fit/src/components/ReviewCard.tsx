@@ -42,8 +42,7 @@ const ReviewCard = ({ reviewData, authorData }: ReviewCardProps) => (
                 reviewData.grade
                 ?
                     <Rating
-                        sx={{ mt: '9px' }}
-                        value={reviewData.grade} readOnly
+                        sx={{ mt: '9px' }} value={reviewData.grade} readOnly
                         icon={
                             <ShiningStar>
                                 <Star />
@@ -52,8 +51,7 @@ const ReviewCard = ({ reviewData, authorData }: ReviewCardProps) => (
                     />
                 :
                     <PushPin sx={{
-                        mt: '9px', mr: '5px',
-                        transform: 'rotate(45deg)'
+                        mt: '9px', mr: '5px', transform: 'rotate(45deg)'
                     }} />
             }
         />

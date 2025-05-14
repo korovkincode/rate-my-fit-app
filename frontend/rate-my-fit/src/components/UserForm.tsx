@@ -45,7 +45,7 @@ const UserForm = ({ actionType }: UserFormProps) => {
             setSnackbarStatus({
                 open: true, message: formResponse.description, color: 'error'
             });
-            return;
+            throw new Error(formResponse.description);
         }
 
         setUserCredentials(formResponse.data);

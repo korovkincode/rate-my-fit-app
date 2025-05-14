@@ -5,7 +5,7 @@ import { ChatBubble, Send } from '@mui/icons-material';
 import { AuthContext } from '../context';
 import { useParams, useNavigate, Link as LinkDOM } from 'react-router-dom';
 import { Fit as FitT } from '../types/fit';
-import { User } from '../types/user';
+import { User, UserPreview } from '../types/user';
 import { Item } from '../types/item';
 import { Review } from '../types/review';
 import { sleep, formatDate, getTodayDate, getAvgGrade } from '../utils';
@@ -22,11 +22,6 @@ import ReviewsTable from '../components/ReviewsTable';
 import ReviewCard from '../components/ReviewCard';
 import { SnackbarStatus } from '../types/UI';
 import Snackbar from '../components/UI/snackbar';
-
-interface Reviewer {
-    username: string,
-    pfpLink: string
-};
 
 const Fit = () => {
     const theme = useTheme();
@@ -72,7 +67,7 @@ const Fit = () => {
     } | null>(null);
     const [reviewsData, setReviewsData] = useState<Review[] | null>(null);
     const [reviewersData, setReviewersData] = useState<{
-        [userID: string]: Reviewer
+        [userID: string]: UserPreview
     } | null>(null);
     const [allDataLoaded, setAllDataLoaded] = useState<boolean>(false);
 
@@ -87,7 +82,7 @@ const Fit = () => {
             setSnackbarStatus({
                 open: true, message: fitRequest.description, color: 'error'
             });
-            return;
+            throw new Error(fitRequest.description);
         }
         setFitData(fitRequest.data);
 
@@ -96,7 +91,7 @@ const Fit = () => {
             setSnackbarStatus({
                 open: true, message: userRequest.description, color: 'error'
             });
-            return;
+            throw new Error(userRequest.description);
         }
         setAuthorData(userRequest.data);
         setAuthorPfpLink(await getUserPfpDirect(fitRequest.data.authorToken));
@@ -121,11 +116,11 @@ const Fit = () => {
             setSnackbarStatus({
                 open: true, message: reviewsRequest.description, color: 'error'
             });
-            return;
+            throw new Error(reviewsRequest.description);
         }
         setReviewsData(reviewsRequest.data.reverse());
 
-        let tempReviewersData = {} as {[userID: string]: Reviewer};
+        let tempReviewersData = {} as {[userID: string]: UserPreview};
         for (const reviewItem of reviewsRequest.data) {
             tempReviewersData[reviewItem.authorToken] = await fetchReviewer(reviewItem.authorToken);
         }
@@ -144,7 +139,7 @@ const Fit = () => {
             username: reviewerRequest.data.username,
             pfpLink: await getUserPfpDirect(userToken)
         };
-    }
+    };
 
     useEffect(() => {
         setFitData(null);

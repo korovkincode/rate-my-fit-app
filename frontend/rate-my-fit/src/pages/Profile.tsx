@@ -123,7 +123,8 @@ const Profile = () => {
                             {userData?.bio || 'no bio yet :('}
                         </Typography>
                         <Typography variant="body2" sx={{ mt: 2 }}>
-                            {userData?.totalFits} fit{userData?.totalFits !== 1 && 's'} • {userData?.totalReviews} review{userData?.totalReviews !== 1 && 's'}
+                            {userData?.totalFits} fit{userData?.totalFits !== 1 && 's'} • 
+                            {" " + userData?.totalReviews} review{userData?.totalReviews !== 1 && 's'}
                         </Typography>
                     </>
                     :
@@ -143,7 +144,9 @@ const Profile = () => {
                             <Grid size={{ xs: 12, md: 4 }} key={index}>
                                 <FitCard
                                     fitData={fit} itemsData={itemsData}
-                                    usernamesData={usernamesData} authorPfpLink={pfpLink || ''}
+                                    authorData={{
+                                        username: usernamesData[fit.authorToken], pfpLink: pfpLink || ''
+                                    }}
                                 />
                             </Grid>
                         )

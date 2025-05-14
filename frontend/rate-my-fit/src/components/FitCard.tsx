@@ -9,19 +9,17 @@ import { Link as LinkDOM, useNavigate } from 'react-router-dom';
 import ItemsTable from './ItemsTable';
 import { BounceDown, Shake } from './UI/animations';
 import Stepper from './UI/stepper';
+import { UserPreview } from '../types/user';
 
 interface FitCardProps {
     fitData: Fit,
     itemsData: {
         [itemID: string]: Item
     },
-    usernamesData: {
-        [userID: string]: string
-    },
-    authorPfpLink: string
+    authorData: UserPreview
 };
 
-const FitCard = ({ fitData, itemsData, usernamesData, authorPfpLink }: FitCardProps) => {
+const FitCard = ({ fitData, itemsData, authorData }: FitCardProps) => {
     if (!fitData.authorToken) {
         throw new Error('Author token is not defined');
     }
@@ -51,10 +49,10 @@ const FitCard = ({ fitData, itemsData, usernamesData, authorPfpLink }: FitCardPr
                 <LinkDOM to={`/fit/${fitData.fitID}`} style={{ color: 'inherit', textDecoration: 'none' }}>
                     <CardHeader
                         avatar={
-                            <LinkDOM to={`/user/@${usernamesData[fitData.authorToken]}`}>
+                            <LinkDOM to={`/user/@${authorData.username}`}>
                                 <Avatar
-                                    alt={usernamesData[fitData.authorToken]}
-                                    src={authorPfpLink}
+                                    alt={authorData.username}
+                                    src={authorData.pfpLink}
                                     sx={{ mr: 0.5, animation: `${Shake(1.1, 3)} 2s ease infinite` }} 
                                 />
                             </LinkDOM>

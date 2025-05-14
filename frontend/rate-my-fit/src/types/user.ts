@@ -14,6 +14,11 @@ export type User = {
     password: string | null
 };
 
+export type UserPreview = {
+    username: string,
+    pfpLink: string
+};
+
 export type Form = {
     username: string,
     password: string,

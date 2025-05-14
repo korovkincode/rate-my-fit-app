@@ -113,7 +113,9 @@ const Navbar = () => {
             <AppBar position="static" sx={{ borderRadius: {xs: '0 0 20px 20px', sm: 10} }}>
                 <Toolbar>
                     <Typography variant="h5" component="div" sx={{ fontWeight: 700, flexGrow: 1 }}>
-                        📊 FitRater
+                        <LinkDOM to="/" style={{ color: 'inherit', textDecoration: 'none' }}>
+                            📊 FitRater
+                        </LinkDOM>
                     </Typography>
                     <IconButton size="large" onClick={handleAddMenu} color="success" sx={{ mr: 0 }}>
                         <Add />

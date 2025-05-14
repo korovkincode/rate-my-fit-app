@@ -55,10 +55,11 @@ def findByRelation(collection, filter: dict, hide: dict, start: int = None, limi
 
     queryParams = {}
     if limit is not None:
+        queryParams["skip"] = start
         queryParams["limit"] = resultStart + limit
 
     resultsCursor = collection.find(filter, hide, **queryParams)
-    return collectionToList(resultsCursor)[resultStart:]
+    return collectionToList(resultsCursor)
 
 
 def checkItems(itemsID: List[str]) -> bool:

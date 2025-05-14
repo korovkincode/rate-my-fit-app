@@ -73,7 +73,7 @@ const FitForm = ({ actionType, openSetter, snackbarSetter }: FitFormProps) => {
             snackbarSetter({
                 open: true, message: searchRequest.description, color: 'error'
             });
-            return;
+            throw new Error(searchRequest.description);
         }
 
         setQueryItems(searchRequest.data);
@@ -138,7 +138,7 @@ const FitForm = ({ actionType, openSetter, snackbarSetter }: FitFormProps) => {
             snackbarSetter({
                 open: true, message: formResponse.description, color: 'error'
             });
-            return;
+            throw new Error(formResponse.description);
         }
         openSetter(false);
         snackbarSetter({

@@ -1,8 +1,10 @@
+from typing import Literal
 from fastapi import APIRouter, HTTPException, Body, UploadFile, File
 from models.fit import FitModel
 from config.database import Database
 import uuid
 import utils
+from pymongo import ASCENDING, DESCENDING
 
 
 router = APIRouter()
@@ -116,4 +118,16 @@ async def getUserFits(userID: str) -> HTTPException | dict:
         "data": utils.findByRelation(
             Database.Fits, {"authorToken": authorToken}, {"_id": 0}
         )
+    }
+
+
+@router.get("/all/", response_model=None)
+async def getAllFits(start: int, limit: int, sorting: str, direction: Literal["ASC", "DSC"]) -> dict:
+    queryFits = Database.Fits.find(
+        {}, {"_id": 0}
+    ).sort(sorting, ASCENDING if direction == "ASC" else DESCENDING).skip(start).limit(limit)
+
+    return {
+        "message": "Successful retrieving",
+        "data": utils.collectionToList(queryFits)
     }

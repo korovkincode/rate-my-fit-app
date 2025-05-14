@@ -28,7 +28,7 @@ const ItemForm = ({ actionType, openSetter, snackbarSetter }: ItemFormProps) => 
                 snackbarSetter({
                     open: true, message: brandsRequest.description, color: 'error'
                 });
-                return;
+                throw new Error(brandsRequest.description);
             }
             setBrandsList(brandsRequest.data);
         };
@@ -58,7 +58,7 @@ const ItemForm = ({ actionType, openSetter, snackbarSetter }: ItemFormProps) => 
             snackbarSetter({
                 open: true, message: formResponse.description, color: 'error'
             });
-            return;
+            throw new Error(formResponse.description);
         }
         openSetter(false);
         snackbarSetter({
