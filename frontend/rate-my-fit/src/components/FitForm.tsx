@@ -217,6 +217,7 @@ const FitForm = ({ actionType, openSetter, snackbarSetter }: FitFormProps) => {
                             <Stepper
                                 length={fitData.pics ? fitData.pics.length : 0}
                                 step={galleryIndex} setter={setGalleryIndex}
+                                stickBottom={false}
                             />
                         </Box>
                     </>

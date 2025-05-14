@@ -1,6 +1,7 @@
 import secureLocalStorage from 'react-secure-storage';
 import { UserCredentials } from './types/user';
 import { Item } from './types/item';
+import { Review } from './types/review';
 
 export const getCredentials = () => {
     const storedCredentials = secureLocalStorage.getItem('userCredentials');
@@ -59,4 +60,9 @@ export const convertItemsList = (items: Item[]) => {
         itemsMap[item.itemID] = item;
     }
     return itemsMap;
+}
+
+export const getAvgGrade = (reviews: Review[]) => {
+    const gradeSum = reviews.reduce((currentSum, review) => currentSum + review.grade, 0);
+    return gradeSum / reviews.length;
 }

@@ -48,10 +48,11 @@ const Profile = () => {
             const userRequest = await getUser(userID, null);
             if (userRequest.status !== 200) {
                 throw new Error(userRequest.description);
-            } else {
-                setUserData(userRequest.data);
-                setUsernamesData({ [userRequest.data.userToken]: userRequest.data.username });
             }
+            setUserData(userRequest.data);
+            setUsernamesData({
+                [userRequest.data.userToken]: userRequest.data.username
+            });
             
             setPfpLink(await getUserPfpDirect(userID));
         };
@@ -61,24 +62,22 @@ const Profile = () => {
             const fitsRequest = await getUserFits(userID);
             if (fitsRequest.status !== 200) {
                 throw new Error(fitsRequest.description);
-            } else {
-                setUserFits(fitsRequest.data);
-                let tempItemsData = {} as { [itemID: string]: Item };
-
-                for (const fit of fitsRequest.data) {
-                    for (const itemID of fit.itemsID) {
-                        if (itemID in tempItemsData) continue;
-
-                        const itemRequest = await getItem(itemID);
-                        if (itemRequest.status !== 200) {
-                            throw new Error(itemRequest.description);
-                        } else {
-                            tempItemsData[itemID] = itemRequest.data;
-                        }
-                    }
-                }
-                setItemsData(tempItemsData);
             }
+            setUserFits(fitsRequest.data.reverse());
+            
+            let tempItemsData = {} as { [itemID: string]: Item };
+            for (const fit of fitsRequest.data) {
+                for (const itemID of fit.itemsID) {
+                    if (itemID in tempItemsData) continue;
+
+                    const itemRequest = await getItem(itemID);
+                    if (itemRequest.status !== 200) {
+                        throw new Error(itemRequest.description);
+                    }
+                    tempItemsData[itemID] = itemRequest.data;
+                }
+            }
+            setItemsData(tempItemsData);
         };
 
         fetchUser();

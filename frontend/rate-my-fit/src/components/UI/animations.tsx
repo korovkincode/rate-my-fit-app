@@ -46,3 +46,14 @@ export const Shake = (scale: number, deg: number) => keyframes`
         transform: scale(1);
     }
 `;
+
+export const Shine = keyframes`
+    0% {
+        -webkit-mask-position: 120%;
+        mask-position: 120%;
+    }
+    100% {
+        -webkit-mask-position: -20%;
+        mask-position: -20%;
+    }
+`;

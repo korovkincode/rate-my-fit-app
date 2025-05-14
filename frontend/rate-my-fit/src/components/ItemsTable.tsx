@@ -4,7 +4,9 @@ import ItemCard from './ItemCard';
 import { getTotal } from '../utils';
 
 interface ItemsTableProps {
-    itemsData: {[itemID: string]: Item},
+    itemsData: {
+        [itemID: string]: Item
+    },
     useType: string,
     itemClick: Function,
     itemRemove: Function | null

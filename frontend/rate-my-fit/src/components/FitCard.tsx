@@ -12,8 +12,12 @@ import Stepper from './UI/stepper';
 
 interface FitCardProps {
     fitData: Fit,
-    itemsData: {[itemID: string]: Item},
-    usernamesData: {[userID: string]: string},
+    itemsData: {
+        [itemID: string]: Item
+    },
+    usernamesData: {
+        [userID: string]: string
+    },
     authorPfpLink: string
 };
 
@@ -86,7 +90,7 @@ const FitCard = ({ fitData, itemsData, usernamesData, authorPfpLink }: FitCardPr
                 </Drawer>
                 <Stepper
                     length={fitData.picnames ? fitData.picnames.length : 0} step={galleryIndex}
-                    stickBottom={true} setter={setGalleryIndex}
+                    setter={setGalleryIndex} stickBottom={true}
                 />
             </Card>
         </>

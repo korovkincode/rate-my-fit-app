@@ -5,11 +5,11 @@ import { KeyboardArrowRight, KeyboardArrowLeft } from '@mui/icons-material';
 interface StepperProps {
     length: number,
     step: number,
+    setter: Dispatch<SetStateAction<number>>,
     stickBottom: boolean
-    setter: Dispatch<SetStateAction<number>>
 };
 
-const Stepper = ({ length, step, stickBottom, setter }: StepperProps) => {
+const Stepper = ({ length, step, setter, stickBottom }: StepperProps) => {
     return (
         <MobileStepper
             variant="dots" steps={length}

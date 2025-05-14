@@ -4,14 +4,6 @@ export type UserCredentials = {
     reloader: number
 };
 
-export type Form = {
-    username: string,
-    password: string,
-    bio: string | null
-};
-
-export type FormType = 'sign up' | 'login' | 'update';
-
 export type User = {
     username: string,
     bio: string | null,
@@ -21,3 +13,11 @@ export type User = {
     secretToken: string | null,
     password: string | null
 };
+
+export type Form = {
+    username: string,
+    password: string,
+    bio: string | null
+};
+
+export type FormType = 'sign up' | 'login' | 'update';
