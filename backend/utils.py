@@ -97,3 +97,24 @@ def getUserStats(userID: str) -> dict:
         "fits": len(userFits),
         "reviews": len(userReviews)
     }
+
+
+def getFitStats(fitData: dict) -> dict:
+    totalPrice = 0
+    for itemID in fitData["itemsID"]:
+        totalPrice += Database.Items.find({"itemID": itemID})["price"]
+    
+    fitReviews = collectionToList(Database.Reviews.find({
+        "fitID": fitData["fitID"]
+    }))
+    totalReviews = len(fitReviews)
+    gradesSum = 0
+    for review in fitReviews:
+        gradesSum += review["grade"]
+    avgGrade = gradesSum / totalReviews if totalReviews else 0
+    
+    return {
+        "totalPrice": totalPrice,
+        "totalReviews": totalReviews,
+        "avgGrade": avgGrade
+    }

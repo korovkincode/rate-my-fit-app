@@ -66,3 +66,7 @@ export const getAvgGrade = (reviews: Review[]) => {
     const gradeSum = reviews.reduce((currentSum, review) => currentSum + review.grade, 0);
     return gradeSum / reviews.length;
 }
+
+export const countPages = (total: number, perPage: number) => {
+    return Math.floor((total - 1) / perPage) + 1;
+}

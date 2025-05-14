@@ -65,7 +65,9 @@ const Profile = () => {
             }
             setUserFits(fitsRequest.data.reverse());
             
-            let tempItemsData = {} as { [itemID: string]: Item };
+            let tempItemsData = {} as {
+                [itemID: string]: Item
+            };
             for (const fit of fitsRequest.data) {
                 for (const itemID of fit.itemsID) {
                     if (itemID in tempItemsData) continue;

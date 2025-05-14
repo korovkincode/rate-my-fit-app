@@ -365,7 +365,7 @@ const Fit = () => {
                             </Typography>
                             {reviewsData.length > 0 &&
                                 <Typography sx={{ fontWeight: 700 }}>
-                                    {getAvgGrade(reviewsData).toFixed(1)}⭐
+                                    {fitData.avgGrade.toFixed(1)}⭐
                                 </Typography>
                             }
                         </Box>

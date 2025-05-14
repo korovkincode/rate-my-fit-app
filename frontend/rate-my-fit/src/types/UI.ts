@@ -8,3 +8,5 @@ export type SnackbarStatus = {
     message: string,
     color: 'info' | 'success' | 'warning' | 'error'
 };
+
+export type Sort = 'Date' | 'Popularity' | 'Grade' | 'Price';

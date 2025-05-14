@@ -1,13 +1,17 @@
 import { useState, useEffect } from 'react';
-import { SnackbarStatus } from '../types/UI';
+import { SnackbarStatus } from '../types/UI'
+import { Sort } from '../types/UI';
 import { Fit } from '../types/fit';
 import { Item } from '../types/item';
 import { UserPreview } from '../types/user';
-import { Container } from '@mui/material';
-import { getAllFits } from '../API/fit';
+import { Container, Grid, Typography, Box, NativeSelect, IconButton, Stack, Pagination } from '@mui/material';
+import { getTotalFits, getAllFits } from '../API/fit';
 import { getItem } from '../API/item';
 import { getUser, getUserPfpDirect } from '../API/user';
 import Loader from '../components/UI/loader';
+import FitCard from '../components/FitCard';
+import { North, South } from '@mui/icons-material';
+import { countPages } from '../utils';
 
 const FITS_ON_PAGE = 15;
 const SORTING_FIELD = {
@@ -21,12 +25,31 @@ const Main = () => {
     });
 
     const [pageNum, setPageNum] = useState<number>(1);
-    const [sortType, setSortType] = useState<'Date' | 'Popularity' | 'Grade' | 'Price'>('Date');
+    const [sortType, setSortType] = useState<Sort>('Date');
     const [sortDirection, setSortDirection] = useState<'ASC' | 'DSC'>('DSC');
+    const [totalFits, setTotalFits] = useState<number | null>(null);
+    
+    const fetchTotalFits = async () => {
+        const totalFitsRequest = await getTotalFits();
+        if (totalFitsRequest.status !== 200) {
+            setSnackbarStatus({
+                open: true, message: totalFitsRequest.description, color: 'error'
+            });
+            throw new Error(totalFitsRequest.description);
+        }
+        setTotalFits(totalFitsRequest.data);
+    };
+    fetchTotalFits();
+
     const [fitsData, setFitsData] = useState<Fit[] | null>(null);
     const [itemsData, setItemsData] = useState<{
         [itemID: string]: Item
-    }| null>(null);
+    } | null>(null);
+    const [fitItems, setFitItems] = useState<{
+        [fitID: string]: {
+            [itemID: string]: Item
+        }
+    } | null>(null);
     const [authorsData, setAuthorsData] = useState<{
         [userID: string]: UserPreview
     } | null>(null);
@@ -34,6 +57,11 @@ const Main = () => {
 
     useEffect(() => {
         setAllDataLoaded(false);
+        setFitsData(null);
+        setItemsData(null);
+        setFitItems(null);
+        setAuthorsData(null);
+
         const fetchFits = async () => {
             const fitsRequest = await getAllFits(
                 (pageNum - 1) * FITS_ON_PAGE, FITS_ON_PAGE,
@@ -43,23 +71,33 @@ const Main = () => {
                 setSnackbarStatus({
                     open: true, message: fitsRequest.description, color: 'error'
                 });
-                return;
+                throw new Error(fitsRequest.description);
             }
             setFitsData(fitsRequest.data);
 
-            let tempItemsData = {} as { [itemID: string]: Item };
+            let tempItemsData = {} as {
+                [itemID: string]: Item
+            };
+            let tempFitItems = {} as {
+                [fitID: string]: {
+                    [itemID: string]: Item
+                }
+            };
             for (const fitData of fitsRequest.data) {
+                tempFitItems[fitData.fitID] = {};
                 for (const itemID of fitData.itemsID) {
-                    if (itemID in tempItemsData) continue;
-
-                    const itemRequest = await getItem(itemID);
-                    if (itemRequest.status !== 200) {
-                        throw new Error(itemRequest.description);
+                    if (!(itemID in tempItemsData)) {    
+                        const itemRequest = await getItem(itemID);
+                        if (itemRequest.status !== 200) {
+                            throw new Error(itemRequest.description);
+                        }
+                        tempItemsData[itemID] = itemRequest.data;
                     }
-                    tempItemsData[itemID] = itemRequest.data;
+                    tempFitItems[fitData.fitID][itemID] = tempItemsData[itemID];
                 }
             }
             setItemsData(tempItemsData);
+            setFitItems(tempFitItems);
 
             let tempAuthorsData = {} as { [userID: string]: UserPreview };
             for (const fitData of fitsRequest.data) {
@@ -84,21 +122,61 @@ const Main = () => {
         };
 
         fetchFits();
-    }, [pageNum, sortType]);
+    }, [pageNum, sortType, sortDirection]);
 
     useEffect(() => {
         setAllDataLoaded(
-            [fitsData, itemsData, authorsData].every(el => el !== null)
+            [totalFits, fitsData, itemsData, authorsData].every(el => el !== null)
         );
-    }, [fitsData, itemsData, authorsData]);
+    }, [totalFits, fitsData, itemsData, authorsData]);
 
     return (
         !allDataLoaded
         ?
             <Loader loaded={allDataLoaded} />
         :
-            <Container maxWidth="md">
-                
+            <Container maxWidth="md" sx={{ mt: 3 }}>
+                <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
+                    <Typography sx={{ fontWeight: 700, mr: 2 }}>
+                        Sort by
+                    </Typography>
+                    <NativeSelect value={sortType} onChange={e => setSortType(e.target.value as Sort)}>
+                        {(Object.keys(SORTING_FIELD) as Array<keyof typeof SORTING_FIELD>).map((field, index) =>
+                            <option key={index} value={field}>
+                                {field}
+                            </option>
+                        )}
+                    </NativeSelect>
+                    <IconButton onClick={() => setSortDirection(sortDirection === 'ASC' ? 'DSC' : 'ASC')}>
+                        {sortDirection == 'ASC'
+                        ?
+                            <North />
+                        :
+                            <South />
+                        }
+                    </IconButton>
+                </Box>
+                <Grid container spacing={2} sx={{ mt: 3 }}>
+                    {fitsData && itemsData && fitItems && authorsData &&
+                       fitsData.map((fit, index) =>
+                            <Grid size={{ xs: 12, md: 4 }}>
+                                <FitCard
+                                    key={index}
+                                    fitData={fit} itemsData={fitItems[fit.fitID]}
+                                    authorData={authorsData[fit.authorToken]}
+                                />
+                            </Grid>
+                        )
+                    }
+                </Grid>
+            {totalFits &&
+                <Stack sx={{ mt: 4, alignItems: 'center' }}>
+                    <Pagination
+                        count={countPages(totalFits, FITS_ON_PAGE)} page={pageNum}
+                        onChange={(_, value) => setPageNum(value)}
+                    />
+                </Stack>
+            }
             </Container>
     );
 };

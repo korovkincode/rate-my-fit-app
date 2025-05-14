@@ -27,7 +27,11 @@ async def addFit(fitData: FitModel = Body(...), pics: list[UploadFile] = File(..
     fitData["authorToken"] = fitData["userCredentials"]["userToken"]
     del fitData["userCredentials"]
     fitData["picnames"] = utils.collectPics(pics, {"flag": 0})
-    
+    fitData = {
+        **fitData,
+        **utils.getFitStats(fitData)
+    }
+
     try:
         Database.Fits.insert_one(fitData)
         fitData.pop("_id", None)
@@ -87,6 +91,10 @@ async def updateFit(fitID: str, appendPics: bool = False, fitData: FitModel = Bo
         "flag": appendPics, "picnames": findFit["picnames"]
     }
     fitData["picnames"] = utils.collectPics(pics, picStatus)
+    fitData = {
+        **fitData,
+        **utils.getFitStats(fitData)
+    }
     
     try:
         Database.Fits.find_one_and_replace({"fitID": fitID}, fitData)
@@ -130,4 +138,12 @@ async def getAllFits(start: int, limit: int, sorting: str, direction: Literal["A
     return {
         "message": "Successful retrieving",
         "data": utils.collectionToList(queryFits)
+    }
+
+
+@router.get("/total/", response_model=None)
+async def getTotalFits() -> dict:
+    return {
+        "message": "Successful retrieving",
+        "data": Database.Fits.count_documents({})
     }

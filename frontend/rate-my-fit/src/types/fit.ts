@@ -5,7 +5,10 @@ export type Fit = {
     date: string,
     itemsID: string[],
     authorToken: string,
-    picnames: string[]
+    picnames: string[],
+    totalPrice: number,
+    totalReviews: number,
+    avgGrade: number
 };
 
 export type Form = {

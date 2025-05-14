@@ -10,3 +10,6 @@ class FitModel(AbstractModel):
     date: str
     description: Optional[str] = None
     itemsID: Optional[List[str]] = None
+    totalPrice: int
+    totalReviews: int
+    avgGrade: float

@@ -51,3 +51,15 @@ export const getAllFits = async (start: number, limit: number, sorting: string, 
 
     return response;
 };
+
+export const getTotalFits = async () => {
+    const response = await APICall({
+        method: 'GET',
+        path: '/fit/total/',
+        headers: null,
+        body: null,
+        multipart: false
+    });
+
+    return response;
+};

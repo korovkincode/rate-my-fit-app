@@ -64,7 +64,7 @@ const FitCard = ({ fitData, itemsData, authorData }: FitCardProps) => {
                         title={fitData.title} subheader={formatDate(fitData.date)}
                     />
                     <CardMedia
-                        component="img"
+                        component="img" sx={{ maxHeight: {sm: '345px'} }}
                         image={fitData.picnames ? `${API_URL}/static/${fitData.picnames[galleryIndex]}` : ''}
                         alt={`${fitData.title} - ${galleryIndex + 1}`}
                     />

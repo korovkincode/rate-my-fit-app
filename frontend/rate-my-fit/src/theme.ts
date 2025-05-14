@@ -35,14 +35,6 @@ const theme = createTheme({
                     height: '100%',
                 },
             },
-        },
-        MuiCardMedia: {
-            styleOverrides: {
-                img: {
-                    objectFit: 'contain',
-                    height: '100%',
-                },
-            },
         }
     },
 });
