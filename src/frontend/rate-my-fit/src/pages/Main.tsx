@@ -15,7 +15,6 @@ import { countPages } from '../utils';
 import Hero from '../components/Hero';
 import { motion } from 'framer-motion';
 
-
 const FITS_ON_PAGE = 15;
 const SORTING_FIELD = {
     'Date': '_id', 'Popularity': 'totalReviews',
