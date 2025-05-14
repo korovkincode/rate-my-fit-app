@@ -57,3 +57,8 @@ export const Shine = keyframes`
         mask-position: -20%;
     }
 `;
+
+export const Scanline = keyframes`
+    0% { transform: translateY(-100%); }
+    100% { transform: translateY(100%); }
+`;

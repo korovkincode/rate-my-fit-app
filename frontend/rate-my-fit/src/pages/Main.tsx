@@ -7,6 +7,7 @@ import { Container } from '@mui/material';
 import { getAllFits } from '../API/fit';
 import { getItem } from '../API/item';
 import { getUser, getUserPfpDirect } from '../API/user';
+import Loader from '../components/UI/loader';
 
 const FITS_ON_PAGE = 15;
 const SORTING_FIELD = {
@@ -92,9 +93,13 @@ const Main = () => {
     }, [fitsData, itemsData, authorsData]);
 
     return (
-        <Container maxWidth="md">
-            
-        </Container>
+        !allDataLoaded
+        ?
+            <Loader loaded={allDataLoaded} />
+        :
+            <Container maxWidth="md">
+                
+            </Container>
     );
 };
 
