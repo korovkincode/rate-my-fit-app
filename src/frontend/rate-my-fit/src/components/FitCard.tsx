@@ -75,7 +75,9 @@ const FitCard = ({ fitData, itemsData, authorData }: FitCardProps) => {
                     transitionDuration={{ appear: 100, enter: 500, exit: 500 }}
                     container={fitContainerRef.current}
                     ModalProps={{
-                        container: fitContainerRef.current, disablePortal: true
+                        container: fitContainerRef.current, disablePortal: true,
+                        keepMounted: true, disableAutoFocus: true,
+                        disableEnforceFocus: true, disableScrollLock: true
                     }}
                     sx={{
                         position: 'absolute', 

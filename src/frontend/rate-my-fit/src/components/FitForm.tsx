@@ -119,7 +119,7 @@ const FitForm = ({ actionType, openSetter, snackbarSetter }: FitFormProps) => {
 
         const requestBody = {
             userCredentials: userCredentials, title: fitData.title, description: fitData.description,
-            date: getTodayDate(), itemsID: fitData.itemsID
+            date: getTodayDate(), itemsID: fitData.itemsID, totalPrice: 0, totalReviews: 0, avgGrade: 0
         };
         const formData = new FormData();
         formData.append('fitData', JSON.stringify(requestBody));
@@ -214,12 +214,12 @@ const FitForm = ({ actionType, openSetter, snackbarSetter }: FitFormProps) => {
                                     </Button>
                                 </CardActions>
                             </Card>
-                            <Stepper
-                                length={fitData.pics ? fitData.pics.length : 0}
-                                step={galleryIndex} setter={setGalleryIndex}
-                                stickBottom={false}
-                            />
                         </Box>
+                        <Stepper
+                            length={fitData.pics ? fitData.pics.length : 0}
+                            step={galleryIndex} setter={setGalleryIndex}
+                            stickBottom={false}
+                        />
                     </>
                 )}
                 <Grid size={{ xs: 12 }} sx={{ mt: 2 }}>

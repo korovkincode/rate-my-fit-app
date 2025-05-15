@@ -15,7 +15,7 @@ const Stepper = ({ length, step, setter, stickBottom }: StepperProps) => {
             variant="dots" steps={length}
             activeStep={step} sx={{
                 pl: 0, pr: 0, bgcolor: 'transparent', flexGrow: 1,
-                ...(stickBottom && {position: 'absolute', bottom: 0})
+                ...(stickBottom ? {position: 'absolute', bottom: 0} : {position: 'relative'})
             }}
             nextButton={
                 <Button 

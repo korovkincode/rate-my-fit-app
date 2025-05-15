@@ -102,7 +102,7 @@ def getUserStats(userID: str) -> dict:
 def getFitStats(fitData: dict) -> dict:
     totalPrice = 0
     for itemID in fitData["itemsID"]:
-        totalPrice += Database.Items.find({"itemID": itemID})["price"]
+        totalPrice += Database.Items.find_one({"itemID": itemID})["price"]
     
     fitReviews = collectionToList(Database.Reviews.find({
         "fitID": fitData["fitID"]
