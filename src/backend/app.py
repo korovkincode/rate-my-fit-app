@@ -17,7 +17,8 @@ app.mount("/pfp", StaticFiles(directory="pfp"), name="pfp")
 origins = [
     "http://localhost",
     "http://localhost:3000",
-    "http://localhost:5173"
+    "http://localhost:5173",
+    "https://rate-my-fit-app.vercel.app"
 ]
 
 app.add_middleware(
