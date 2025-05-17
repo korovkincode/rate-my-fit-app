@@ -1,7 +1,7 @@
 .env
 __pycache__
 chromedriver.exe
-static
-!static/.gitkeep
-pfp
-!pfp/.gitkeep
+src/backend/static/*
+!src/backend/static/.gitkeep
+src/backend/pfp/*
+!src/backend/pfp/.gitkeep
