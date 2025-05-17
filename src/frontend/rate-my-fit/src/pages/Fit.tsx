@@ -8,7 +8,7 @@ import { Fit as FitT } from '../types/fit';
 import { User, UserPreview } from '../types/user';
 import { Item } from '../types/item';
 import { Review } from '../types/review';
-import { sleep, formatDate, getTodayDate, getAvgGrade } from '../utils';
+import { sleep, formatDate, getTodayDate } from '../utils';
 import { getFit } from '../API/fit';
 import { getItem } from '../API/item';
 import { Container, Stack, Card, CardMedia, Skeleton, CardHeader, Avatar, Box, Typography, Divider, TextField, InputAdornment, Rating, IconButton } from '@mui/material';
@@ -50,7 +50,7 @@ const Fit = () => {
     if (!authContext) {
         throw new Error('AuthContext is not defined');
     }
-    const [userCredentials, setUserCredentials] = authContext;
+    const [userCredentials, _] = authContext;
 
     const params = useParams();
     const fitID = params.fitID;

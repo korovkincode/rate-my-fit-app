@@ -32,7 +32,7 @@ const cardVariants = {
 };
 
 const Main = () => {
-    const [snackbarStatus, setSnackbarStatus] = useState<SnackbarStatus>({
+    const [_, setSnackbarStatus] = useState<SnackbarStatus>({
         open: false, message: '', color: 'info'
     });
     

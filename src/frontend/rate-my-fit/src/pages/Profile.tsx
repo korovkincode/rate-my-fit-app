@@ -16,7 +16,7 @@ const Profile = () => {
     if (!authContext) {
         throw new Error('AuthContext is not defined');
     }
-    const [userCredentials, setUserCredentials] = authContext; 
+    const [userCredentials, _] = authContext; 
 
     const [userDataLoaded, setUserDataLoaded] = useState(false);
     const [userFitsLoaded, setUserFitsLoaded] = useState(false);
@@ -29,7 +29,7 @@ const Profile = () => {
 
     const [userData, setUserData] = useState<User | null>(null);
     const [pfpLink, setPfpLink] = useState<string | null>(null);
-    const [editMode, setEditMode] = useState(false);
+    const [__, setEditMode] = useState(false);
     const [userFits, setUserFits] = useState<Fit[] | null>(null);
     const [itemsData, setItemsData] = useState<{
         [itemID: string]: Item

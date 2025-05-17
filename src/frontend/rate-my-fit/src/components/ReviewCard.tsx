@@ -5,7 +5,7 @@ import { Star, PushPin } from '@mui/icons-material';
 import { Shake, Shine } from './UI/animations';
 import { formatDate } from '../utils';
 
-const ShiningStar = styled('span')(({ theme }) => ({
+const ShiningStar = styled('span')(() => ({
     WebkitMaskImage: 'linear-gradient(-75deg, rgba(0,0,0,0.6) 30%, #000 50%, rgba(0,0,0,0.6) 70%)',
     WebkitMaskSize: '200%',
     animation: `${Shine} 2s linear infinite`,
