@@ -60,19 +60,3 @@ app.include_router(UserRouter, tags=["User"], prefix="/user")
 app.include_router(FitRouter, tags=["Fit"], prefix="/fit")
 app.include_router(ReviewRouter, tags=["Review"], prefix="/review")
 app.include_router(ItemRouter, tags=["Item"], prefix="/item")
-
-
-'''
-ToDos:
-Refactor routers (implement general abstract class)
-
-Sample fits:
-https://whatsonthestar.com/outfit/ken-carson-41670 ✔️
-https://whatsonthestar.com/outfit/destroy-lonely-42709 ✔️
-https://whatsonthestar.com/outfit/playboi-carti-42376 ✔️
-https://whatsonthestar.com/outfit/playboi-carti-23879
-https://whatsonthestar.com/outfit/ken-carson-34702
-
-Items to add:
-https://jayycerrcustoms.store/products/fur-backpack ✔️
-'''
