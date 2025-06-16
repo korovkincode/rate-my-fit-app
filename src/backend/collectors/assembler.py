@@ -28,7 +28,7 @@ for filename in TARGET_FILES:
         general_data.append({
             "itemID": uuid.uuid4().hex,
             "brand": brand_name.replace("-", " "),
-            **item_data,
+            **item_data
         })
 
 general_file_path = os.path.join(TARGET_FOLDER, RESULT_FILE)

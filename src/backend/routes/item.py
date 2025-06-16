@@ -87,11 +87,11 @@ async def search_item(item_name: str, limit: int = 15) -> dict:
         {
             "$search": {
                 "index": "default",
-                "text": {"query": item_name, "path": ["name"]},
+                "text": {"query": item_name, "path": ["name"]}
             }
         },
         {"$limit": limit},
-        {"$project": {"_id": 0}},
+        {"$project": {"_id": 0}}
     ]
     query_items = Database.Items.aggregate(pipeline)
 

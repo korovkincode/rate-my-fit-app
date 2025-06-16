@@ -32,7 +32,7 @@ def parse_page(page: int):
             "name": item_name,
             "img": item_img,
             "price": item_price,
-            "category": item_category,
+            "category": item_category
         })
 
 
