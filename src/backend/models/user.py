@@ -1,5 +1,6 @@
-from .abstract import AbstractModel
 from typing import Optional
+
+from .abstract import AbstractModel
 
 
 class UserAuthModel(AbstractModel):

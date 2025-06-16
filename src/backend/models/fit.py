@@ -1,6 +1,7 @@
+from typing import List, Optional
+
 from .abstract import AbstractModel
 from .user import UserCredentialsModel
-from typing import Optional, List
 
 
 class FitModel(AbstractModel):

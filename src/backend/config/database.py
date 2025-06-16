@@ -1,12 +1,14 @@
+import json
+import os
+
 from dotenv import load_dotenv
 from pymongo import MongoClient
 from pymongo.operations import SearchIndexModel
-import os
-import json
 
 
 class Singleton:
     _instance = None
+
     def __new__(cls, *args, **kwargs):
         if not isinstance(cls._instance, cls):
             cls._instance = object.__new__(cls, *args, **kwargs)
@@ -15,7 +17,6 @@ class Singleton:
 
 class Database:
     __URI: str = ""
-
 
     @classmethod
     def connect(cls):
@@ -27,19 +28,18 @@ class Database:
         cls.Fits = cls.DB.Fits
         cls.Reviews = cls.DB.Reviews
         cls.Items = cls.DB.Items
-    
 
     @classmethod
-    def updateItems(cls, replace: bool = False):
-        with open(os.path.join("collectors", "all-items.json"), encoding="utf-8") as allItemsFile:
-            allItemsData = json.load(allItemsFile)
-        
+    def update_items(cls, replace: bool = False):
+        items_path = os.path.join("collectors", "parsed_data", "all-items.json")
+        with open(items_path, encoding="utf-8") as all_items_file:
+            all_items_data = json.load(all_items_file)
+
         if replace:
             cls.Items.delete_many({})
-        cls.Items.insert_many(allItemsData)
+        cls.Items.insert_many(all_items_data)
 
-    
     @classmethod
-    def createIndices(cls, indexModel: SearchIndexModel, collections: list[str]):
+    def create_indices(cls, index_model: SearchIndexModel, collections: list[str]):
         for collection in collections:
-            cls.DB[collection].create_search_index(model=indexModel)
+            cls.DB[collection].create_search_index(model=index_model)
