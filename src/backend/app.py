@@ -19,7 +19,7 @@ origins = [
     "http://localhost",
     "http://localhost:3000",
     "http://localhost:5173",
-    "https://rate-my-fit-app.vercel.app",
+    "https://rate-my-fit-app.vercel.app"
 ]
 
 app.add_middleware(
@@ -27,7 +27,7 @@ app.add_middleware(
     allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
-    allow_headers=["*"],
+    allow_headers=["*"]
 )
 
 UPDATE_ITEMS = False
@@ -36,7 +36,7 @@ REPLACE_ITEMS = False
 CREATE_INDICES = False
 INDEX_MODEL = SearchIndexModel(
     definition={
-        "mappings": {"dynamic": True},
+        "mappings": {"dynamic": True}
     }
 )
 TARGET_COLLECTIONS = ["Users", "Fits", "Items"]

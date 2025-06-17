@@ -1,260 +1,289 @@
 import { useState, MouseEvent, useContext, useEffect, Dispatch, SetStateAction } from 'react';
-import { AppBar, Container, Toolbar, Typography, IconButton, Menu, MenuItem, ListItemIcon, Avatar, Modal, Box, TextField, InputAdornment } from '@mui/material';
-import { Settings, Logout, Login, Person, PersonAdd, Add, AddAPhoto, Checkroom, Search } from '@mui/icons-material';
 import { Link as LinkDOM } from 'react-router-dom';
-import { AuthContext } from '../context';
 import secureLocalStorage from 'react-secure-storage';
-import { getUserPfpDirect } from '../API/user';
-import { Pulse } from './UI/animations';
-import FitForm from './FitForm';
+
+import { useTheme } from '@mui/material/styles';
+import {
+  AppBar,
+  Container,
+  Toolbar,
+  Typography,
+  IconButton,
+  Menu,
+  MenuItem,
+  ListItemIcon,
+  Avatar,
+  Modal,
+  Box,
+  TextField,
+  InputAdornment,
+  useMediaQuery
+} from '@mui/material';
+import {
+  Settings,
+  Logout,
+  Login,
+  Person,
+  PersonAdd,
+  Add,
+  AddAPhoto,
+  Checkroom,
+  Search
+} from '@mui/icons-material';
+
 import { SnackbarStatus } from '../types/UI';
+
+import { getUserPfpDirect } from '../API/user';
+
+import { AuthContext } from '../context';
+
+import FitForm from './FitForm';
 import Snackbar from './UI/snackbar';
 import ItemForm from './ItemForm';
-import { useTheme } from '@mui/material/styles';
-import useMediaQuery from '@mui/material/useMediaQuery';
+import { Pulse } from './UI/animations';
 
 const MenuSlotProps = {
-    paper: {
-        elevation: 0,
-        sx: {
-            overflow: 'visible',
-            filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
-            '& .MuiAvatar-root': {
-                width: 32,
-                height: 32,
-                ml: -0.5,
-                mr: 1,
-            },
-            '&::before': {
-                content: '""',
-                display: 'block',
-                position: 'absolute',
-                top: 0,
-                right: 14,
-                width: 10,
-                height: 10,
-                bgcolor: 'background.paper',
-                transform: 'translateY(-50%) rotate(45deg)',
-                zIndex: 0,
-            },
-        },
+  paper: {
+    elevation: 0,
+    sx: {
+      overflow: 'visible',
+      filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
+      '& .MuiAvatar-root': {
+        width: 32,
+        height: 32,
+        ml: -0.5,
+        mr: 1
+      },
+      '&::before': {
+        content: '""',
+        display: 'block',
+        position: 'absolute',
+        top: 0,
+        right: 14,
+        width: 10,
+        height: 10,
+        bgcolor: 'background.paper',
+        transform: 'translateY(-50%) rotate(45deg)',
+        zIndex: 0
+      }
     }
+  }
 };
 
 const ModalStyles = {
-    overflow: 'auto',
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    minWidth: '350px',
-    maxWidth: '400px',
-    maxHeight: '100vh',
-    bgcolor: 'custom.pink',
-    border: '2px solid #000',
-    boxShadow: 24,
-    p: 4,
-    borderRadius: 10
+  overflow: 'auto',
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  minWidth: '350px',
+  maxWidth: '400px',
+  maxHeight: '100vh',
+  bgcolor: 'custom.pink',
+  border: '2px solid #000',
+  boxShadow: 24,
+  p: 4,
+  borderRadius: 10
 };
 
 const Navbar = () => {
-    const theme = useTheme();
-    const smFlag = useMediaQuery(theme.breakpoints.down('md'));
+  const theme = useTheme();
+  const smFlag = useMediaQuery(theme.breakpoints.down('md'));
 
-    const authContext = useContext(AuthContext);
-    if (!authContext) {
-        throw new Error('AuthContext is not defined');
-    }
-    const [userCredentials, setUserCredentials] = authContext;
-    const [username, setUsername] = useState<string | null>((secureLocalStorage.getItem('username') || '') as string);
-    const [pfpLink, setPfpLink] = useState<string | null>();
+  const authContext = useContext(AuthContext);
+  if (!authContext) {
+    throw new Error('AuthContext is not defined');
+  }
+  const [userCredentials, setUserCredentials] = authContext;
+  const [username, setUsername] = useState<string | null>((secureLocalStorage.getItem('username') || '') as string);
+  const [pfpLink, setPfpLink] = useState<string | null>();
 
-    useEffect(() => {
-        setUsername((secureLocalStorage.getItem('username') || '') as string);
+  useEffect(() => {
+    setUsername((secureLocalStorage.getItem('username') || '') as string);
 
-        const fetchPfp = async () => setPfpLink(await getUserPfpDirect(userCredentials.userToken));
-        fetchPfp();
-    }, [userCredentials, setUserCredentials]);
-    
-    const handleLogout = () => {
-        setUserCredentials({
-            'userToken': '', 'secretToken': '', reloader: 0
-        });
-        secureLocalStorage.setItem('username', '');
-        setUserMenuEl(null);
-    };
-
-    const [snackbarStatus, setSnackbarStatus] = useState<SnackbarStatus>({
-        open: false, message: '', color: 'info'
+    const fetchPfp = async () => setPfpLink(await getUserPfpDirect(userCredentials.userToken));
+    fetchPfp();
+  }, [userCredentials, setUserCredentials]);
+  
+  const handleLogout = () => {
+    setUserCredentials({
+      'userToken': '', 'secretToken': '', reloader: 0
     });
+    secureLocalStorage.setItem('username', '');
+    setUserMenuEl(null);
+  };
 
-    const [addMenuEl, setAddMenuEl] = useState<null | HTMLElement>(null);
-    const handleAddMenu = (event: MouseEvent<HTMLElement>) => {
-        setAddMenuEl(event.currentTarget);
-    };
+  const [snackbarStatus, setSnackbarStatus] = useState<SnackbarStatus>({
+    open: false, message: '', color: 'info'
+  });
 
-    const addMenuChecker = (setter: Dispatch<SetStateAction<boolean>>) => {
-        setAddMenuEl(null);
+  const [addMenuEl, setAddMenuEl] = useState<null | HTMLElement>(null);
+  const handleAddMenu = (event: MouseEvent<HTMLElement>) => {
+    setAddMenuEl(event.currentTarget);
+  };
 
-        if (userCredentials.userToken === '') {
-            setSnackbarStatus({
-                open: true, message: 'You have to be authorized for this action', color: 'error'
-            });
-        } else {
-            setter(true);
-        }
-    };
+  const addMenuChecker = (setter: Dispatch<SetStateAction<boolean>>) => {
+    setAddMenuEl(null);
 
-    const [userMenuEl, setUserMenuEl] = useState<null | HTMLElement>(null);
-    const handleUserMenu = (event: MouseEvent<HTMLElement>) => {
-        setUserMenuEl(event.currentTarget);
-    };
+    if (userCredentials.userToken === '') {
+      setSnackbarStatus({
+        open: true, message: 'You have to be authorized for this action', color: 'error'
+      });
+    } else {
+      setter(true);
+    }
+  };
 
-    const [fitFormOpen, setFitFormOpen] = useState<boolean>(false);
-    const [itemFormOpen, setItemFormOpen] = useState<boolean>(false);
+  const [userMenuEl, setUserMenuEl] = useState<null | HTMLElement>(null);
+  const handleUserMenu = (event: MouseEvent<HTMLElement>) => {
+    setUserMenuEl(event.currentTarget);
+  };
 
-    return (
-        <Container sx={{ pl: 0, pr: 0 }}>
-            <AppBar position="static" sx={{ borderRadius: {xs: '0 0 20px 20px', sm: 10} }}>
-                <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <Box sx={{ flex: 1 }}>
-                        <Typography variant="h5" component="div" sx={{ fontWeight: 700 }}>
-                            <LinkDOM to="/" style={{ color: 'inherit', textDecoration: 'none' }}>
-                                📊 FitRater
-                            </LinkDOM>
-                        </Typography>
-                    </Box>
-                    {!smFlag &&
-                        <Box sx={{ flex: 2, display: 'flex', justifyContent: 'center' }}>
-                            <TextField variant="outlined" size="medium"
-                                placeholder="Search for anything (fit, item, brand, etc...)"
-                                sx={{
-                                    width: '100%', backgroundColor: 'custom.black',
-                                    borderRadius: 5, boxShadow: 2,
-                                    '& .MuiOutlinedInput-root': {
-                                        height: 52, // Taller input
-                                        borderRadius: 5,
-                                        paddingRight: '8px',
-                                    },
-                                    '& .MuiOutlinedInput-notchedOutline': {
-                                        border: '1px solid #D65076',
-                                    }
-                                }}
-                                slotProps={{
-                                    input: {
-                                        startAdornment: (
-                                            <InputAdornment position="start">
-                                                <Search />
-                                            </InputAdornment>
-                                        )
-                                    }
-                                }}
-                            />
-                        </Box>
-                    }
-                    <Box sx={{ flex: 1, display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
-                        {smFlag &&
-                            <IconButton size="large" sx={{ mt: '5px', mr: 0, color: 'custom.pink' }}>
-                                <Search />
-                            </IconButton>
-                        }
-                        <IconButton size="large" onClick={handleAddMenu} color="success" sx={{ mr: 0 }}>
-                            <Add />
-                        </IconButton>
-                        <IconButton size="large" onClick={handleUserMenu} color="inherit" sx={{ mr: -1 }}>
-                            <Avatar src={pfpLink || ''} sx={{
-                                width: '45px', height: '45px',
-                                animation: `${Pulse(1.1)} 2s infinite`
-                            }} />
-                        </IconButton>
-                    </Box>
-                    <Menu
-                        id="user-menu-appbar" anchorEl={userMenuEl} keepMounted
-                        open={Boolean(userMenuEl)} onClose={() => setUserMenuEl(null)}
-                        slotProps={MenuSlotProps}
-                        transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-                        anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
-                    >
-                        {userCredentials.userToken !== ''
-                            ?
-                            <> 
-                                <MenuItem onClick={() => setUserMenuEl(null)}>
-                                    <ListItemIcon>
-                                        <Person fontSize="small" />
-                                    </ListItemIcon>
-                                    <LinkDOM to={`/user/@${username}`} style={{ color: 'inherit', textDecoration: 'none' }}>
-                                        Profile
-                                    </LinkDOM>
-                                </MenuItem>
-                                <MenuItem onClick={() => setUserMenuEl(null)}>
-                                    <ListItemIcon>
-                                        <Settings fontSize="small" />
-                                    </ListItemIcon>
-                                    Settings
-                                </MenuItem>
-                                <MenuItem onClick={handleLogout}>
-                                    <ListItemIcon>
-                                        <Logout fontSize="small" />
-                                    </ListItemIcon>
-                                    Logout
-                                </MenuItem>
-                            </>
-                            : 
-                            <>
-                                <MenuItem onClick={() => setUserMenuEl(null)}>
-                                    <ListItemIcon>
-                                        <PersonAdd fontSize="small" />
-                                    </ListItemIcon>
-                                    <LinkDOM to="/signup" style={{ color: 'inherit', textDecoration: 'none' }}>
-                                        Sign up
-                                    </LinkDOM>
-                                </MenuItem>
-                                <MenuItem onClick={() => setUserMenuEl(null)}>
-                                    <ListItemIcon>
-                                        <Login fontSize="small" />
-                                    </ListItemIcon>
-                                    <LinkDOM to="/login" style={{ color: 'inherit', textDecoration: 'none' }}>
-                                        Login
-                                    </LinkDOM>
-                                </MenuItem>
-                            </>
-                        }
-                    </Menu>
-                    <Menu
-                        id="add-menu-appbar" anchorEl={addMenuEl} keepMounted
-                        open={Boolean(addMenuEl)} onClose={() => setAddMenuEl(null)}
-                        slotProps={MenuSlotProps}
-                        transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-                        anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
-                    >
-                        <MenuItem onClick={() => addMenuChecker(setFitFormOpen)}>
-                            <ListItemIcon>
-                                <AddAPhoto fontSize="small" />
-                            </ListItemIcon>
-                            Fit
-                        </MenuItem>
-                        <MenuItem onClick={() => addMenuChecker(setItemFormOpen)}>
-                            <ListItemIcon>
-                                <Checkroom fontSize="small" />
-                            </ListItemIcon>
-                            Item
-                        </MenuItem>
-                    </Menu>
-                </Toolbar>
-            </AppBar>
-            <Modal open={fitFormOpen} onClose={() => setFitFormOpen(false)}>
-                <Box sx={ModalStyles}>
-                    <FitForm actionType="add" openSetter={setFitFormOpen} snackbarSetter={setSnackbarStatus} />
-                </Box>
-            </Modal>
-            <Modal open={itemFormOpen} onClose={() => setItemFormOpen(false)}>
-                <Box sx={ModalStyles}>
-                    <ItemForm actionType="add" openSetter={setItemFormOpen} snackbarSetter={setSnackbarStatus} />
-                </Box>
-            </Modal>
-            <Snackbar status={snackbarStatus} setStatus={setSnackbarStatus} />
-        </Container>
-    );
+  const [fitFormOpen, setFitFormOpen] = useState<boolean>(false);
+  const [itemFormOpen, setItemFormOpen] = useState<boolean>(false);
+
+  return (
+    <Container sx={{ pl: 0, pr: 0 }}>
+      <AppBar position="static" sx={{ borderRadius: {xs: '0 0 20px 20px', sm: 10} }}>
+        <Toolbar sx={{ display: 'flex', justifyContent: 'space-between' }}>
+          <Box sx={{ flex: 1 }}>
+            <Typography variant="h5" component="div" sx={{ fontWeight: 700 }}>
+              <LinkDOM to="/" style={{ color: 'inherit', textDecoration: 'none' }}>
+                📊 FitRater
+              </LinkDOM>
+            </Typography>
+          </Box>
+          {!smFlag &&
+            <Box sx={{ flex: 2, display: 'flex', justifyContent: 'center' }}>
+              <TextField variant="outlined" size="medium"
+                placeholder="Search for anything (fit, item, brand, etc...)"
+                sx={{
+                  width: '100%', backgroundColor: 'custom.black',
+                  borderRadius: 5, boxShadow: 2,
+                  '& .MuiOutlinedInput-root': {
+                    height: 52, // Taller input
+                    borderRadius: 5,
+                    paddingRight: '8px'
+                  },
+                  '& .MuiOutlinedInput-notchedOutline': {
+                    border: '1px solid #D65076'
+                  }
+                }}
+                slotProps={{
+                  input: {
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <Search />
+                      </InputAdornment>
+                    )
+                  }
+                }}
+              />
+            </Box>
+          }
+          <Box sx={{ flex: 1, display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
+            {smFlag &&
+              <IconButton size="large" sx={{ mt: '5px', mr: 0, color: 'custom.pink' }}>
+                <Search />
+              </IconButton>
+            }
+            <IconButton size="large" onClick={handleAddMenu} color="success" sx={{ mr: 0 }}>
+              <Add />
+            </IconButton>
+            <IconButton size="large" onClick={handleUserMenu} color="inherit" sx={{ mr: -1 }}>
+              <Avatar src={pfpLink || ''} sx={{
+                width: '45px', height: '45px',
+                animation: `${Pulse(1.1)} 2s infinite`
+              }} />
+            </IconButton>
+          </Box>
+          <Menu
+            id="user-menu-appbar" anchorEl={userMenuEl} keepMounted
+            open={Boolean(userMenuEl)} onClose={() => setUserMenuEl(null)}
+            slotProps={MenuSlotProps}
+            transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+            anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+          >
+            {userCredentials.userToken !== ''
+              ?
+              <> 
+                <MenuItem onClick={() => setUserMenuEl(null)}>
+                  <ListItemIcon>
+                    <Person fontSize="small" />
+                  </ListItemIcon>
+                  <LinkDOM to={`/user/@${username}`} style={{ color: 'inherit', textDecoration: 'none' }}>
+                    Profile
+                  </LinkDOM>
+                </MenuItem>
+                <MenuItem onClick={() => setUserMenuEl(null)}>
+                  <ListItemIcon>
+                    <Settings fontSize="small" />
+                  </ListItemIcon>
+                  Settings
+                </MenuItem>
+                <MenuItem onClick={handleLogout}>
+                  <ListItemIcon>
+                    <Logout fontSize="small" />
+                  </ListItemIcon>
+                  Logout
+                </MenuItem>
+              </>
+              : 
+              <>
+                <MenuItem onClick={() => setUserMenuEl(null)}>
+                  <ListItemIcon>
+                    <PersonAdd fontSize="small" />
+                  </ListItemIcon>
+                  <LinkDOM to="/signup" style={{ color: 'inherit', textDecoration: 'none' }}>
+                    Sign up
+                  </LinkDOM>
+                </MenuItem>
+                <MenuItem onClick={() => setUserMenuEl(null)}>
+                  <ListItemIcon>
+                    <Login fontSize="small" />
+                  </ListItemIcon>
+                  <LinkDOM to="/login" style={{ color: 'inherit', textDecoration: 'none' }}>
+                    Login
+                  </LinkDOM>
+                </MenuItem>
+              </>
+            }
+          </Menu>
+          <Menu
+            id="add-menu-appbar" anchorEl={addMenuEl} keepMounted
+            open={Boolean(addMenuEl)} onClose={() => setAddMenuEl(null)}
+            slotProps={MenuSlotProps}
+            transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+            anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+          >
+            <MenuItem onClick={() => addMenuChecker(setFitFormOpen)}>
+              <ListItemIcon>
+                <AddAPhoto fontSize="small" />
+              </ListItemIcon>
+              Fit
+            </MenuItem>
+            <MenuItem onClick={() => addMenuChecker(setItemFormOpen)}>
+              <ListItemIcon>
+                <Checkroom fontSize="small" />
+              </ListItemIcon>
+              Item
+            </MenuItem>
+          </Menu>
+        </Toolbar>
+      </AppBar>
+      <Modal open={fitFormOpen} onClose={() => setFitFormOpen(false)}>
+        <Box sx={ModalStyles}>
+          <FitForm actionType="add" openSetter={setFitFormOpen} snackbarSetter={setSnackbarStatus} />
+        </Box>
+      </Modal>
+      <Modal open={itemFormOpen} onClose={() => setItemFormOpen(false)}>
+        <Box sx={ModalStyles}>
+          <ItemForm actionType="add" openSetter={setItemFormOpen} snackbarSetter={setSnackbarStatus} />
+        </Box>
+      </Modal>
+      <Snackbar status={snackbarStatus} setStatus={setSnackbarStatus} />
+    </Container>
+  );
 };
 
 export default Navbar;

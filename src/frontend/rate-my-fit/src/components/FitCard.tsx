@@ -1,100 +1,113 @@
 import { useState, useRef } from 'react';
+import { Link as LinkDOM, useNavigate } from 'react-router-dom';
+
+import {
+  Card,
+  CardHeader,
+  Avatar,
+  CardMedia,
+  IconButton,
+  Drawer,
+  CardActions
+} from '@mui/material';
+import { KeyboardArrowDown } from '@mui/icons-material';
+
 import { Fit } from '../types/fit';
 import { Item } from '../types/item';
-import { Card, CardHeader, Avatar, CardMedia, IconButton, Drawer, CardActions } from '@mui/material';
-import { KeyboardArrowDown } from '@mui/icons-material';
-import { API_URL } from '../API/API';
-import { formatDate } from '../utils';
-import { Link as LinkDOM, useNavigate } from 'react-router-dom';
-import ItemsTable from './ItemsTable';
-import { BounceDown, Shake } from './UI/animations';
-import Stepper from './UI/stepper';
 import { UserPreview } from '../types/user';
 
+import { formatDate } from '../utils';
+
+import { API_URL } from '../API/API';
+
+import ItemsTable from './ItemsTable';
+import Stepper from './UI/stepper';
+import { BounceDown, Shake } from './UI/animations';
+
 interface FitCardProps {
-    fitData: Fit,
-    itemsData: {
-        [itemID: string]: Item
-    },
-    authorData: UserPreview
+  fitData: Fit,
+  itemsData: {
+    [itemID: string]: Item
+  },
+  authorData: UserPreview
 };
 
 const FitCard = ({ fitData, itemsData, authorData }: FitCardProps) => {
-    if (!fitData.authorToken) {
-        throw new Error('Author token is not defined');
-    }
+  if (!fitData.authorToken) {
+    throw new Error('Author token is not defined');
+  }
 
-    const [galleryIndex, setGalleryIndex] = useState<number>(0);
+  const [galleryIndex, setGalleryIndex] = useState<number>(0);
 
-    const [itemsOpen, setItemsOpen] = useState<boolean>(false);
-    const fitContainerRef = useRef(null);
+  const [itemsOpen, setItemsOpen] = useState<boolean>(false);
+  const fitContainerRef = useRef(null);
 
-    const navigate = useNavigate();
-    const itemRedirect = (itemData: Item) => navigate(`/item/${itemData.itemID}`);
-    return (
-        <>
-            <Card sx={{ borderRadius: 5, boxShadow: 3, position: 'relative' }} ref={fitContainerRef}>
-                <CardActions
-                    sx={{
-                        justifyContent: 'center', height: '15px',
-                        bgcolor: 'custom.white', width: '40%',
-                        ml: 'auto', mr: 'auto',
-                        borderBottomLeftRadius: 15, borderBottomRightRadius: 15
-                    }}
-                >
-                    <IconButton onClick={() => setItemsOpen(true)} sx={{ color: 'custom.black' }}>
-                        <KeyboardArrowDown sx={{ animation: `${BounceDown(3)} 2s ease infinite` }} />
-                    </IconButton>
-                </CardActions>
-                <LinkDOM to={`/fit/${fitData.fitID}`} style={{ color: 'inherit', textDecoration: 'none' }}>
-                    <CardHeader
-                        avatar={
-                            <LinkDOM to={`/user/@${authorData.username}`}>
-                                <Avatar
-                                    alt={authorData.username}
-                                    src={authorData.pfpLink}
-                                    sx={{ mr: 0.5, animation: `${Shake(1.1, 3)} 2s ease infinite` }} 
-                                />
-                            </LinkDOM>
-                        }
-                        slotProps={{
-                            title: {fontSize: 24, fontWeight: 700},
-                            subheader: {fontSize: 14, fontWeight: 300}
-                        }}
-                        title={fitData.title} subheader={formatDate(fitData.date)}
-                    />
-                    <CardMedia
-                        component="img" sx={{ maxHeight: {sm: '345px'} }}
-                        image={fitData.picnames ? `${API_URL}/static/${fitData.picnames[galleryIndex]}` : ''}
-                        alt={`${fitData.title} - ${galleryIndex + 1}`}
-                    />
-                </LinkDOM>
-                <Drawer
-                    open={itemsOpen} onClose={() => setItemsOpen(false)}
-                    anchor="top" variant="temporary"
-                    transitionDuration={{ appear: 100, enter: 500, exit: 500 }}
-                    container={fitContainerRef.current}
-                    ModalProps={{
-                        container: fitContainerRef.current, disablePortal: true,
-                        keepMounted: true, disableAutoFocus: true,
-                        disableEnforceFocus: true, disableScrollLock: true
-                    }}
-                    sx={{
-                        position: 'absolute', 
-                        '& .MuiPaper-root': {
-                            position: 'absolute'
-                        }
-                    }}
-                >
-                    <ItemsTable itemsData={itemsData} useType='fitCard' itemClick={itemRedirect} itemRemove={null} />
-                </Drawer>
-                <Stepper
-                    length={fitData.picnames ? fitData.picnames.length : 0} step={galleryIndex}
-                    setter={setGalleryIndex} stickBottom={true}
+  const navigate = useNavigate();
+  const itemRedirect = (itemData: Item) => navigate(`/item/${itemData.itemID}`);
+  return (
+    <>
+      <Card sx={{ borderRadius: 5, boxShadow: 3, position: 'relative' }} ref={fitContainerRef}>
+        <CardActions
+          sx={{
+            justifyContent: 'center', height: '15px',
+            bgcolor: 'custom.white', width: '40%',
+            ml: 'auto', mr: 'auto',
+            borderBottomLeftRadius: 15, borderBottomRightRadius: 15
+          }}
+        >
+          <IconButton onClick={() => setItemsOpen(true)} sx={{ color: 'custom.black' }}>
+            <KeyboardArrowDown sx={{ animation: `${BounceDown(3)} 2s ease infinite` }} />
+          </IconButton>
+        </CardActions>
+        <LinkDOM to={`/fit/${fitData.fitID}`} style={{ color: 'inherit', textDecoration: 'none' }}>
+          <CardHeader
+            avatar={
+              <LinkDOM to={`/user/@${authorData.username}`}>
+                <Avatar
+                  alt={authorData.username}
+                  src={authorData.pfpLink}
+                  sx={{ mr: 0.5, animation: `${Shake(1.1, 3)} 2s ease infinite` }} 
                 />
-            </Card>
-        </>
-    );
+              </LinkDOM>
+            }
+            slotProps={{
+              title: {fontSize: 24, fontWeight: 700},
+              subheader: {fontSize: 14, fontWeight: 300}
+            }}
+            title={fitData.title} subheader={formatDate(fitData.date)}
+          />
+          <CardMedia
+            component="img" sx={{ maxHeight: {sm: '345px'} }}
+            image={fitData.picnames ? `${API_URL}/static/${fitData.picnames[galleryIndex]}` : ''}
+            alt={`${fitData.title} - ${galleryIndex + 1}`}
+          />
+        </LinkDOM>
+        <Drawer
+          open={itemsOpen} onClose={() => setItemsOpen(false)}
+          anchor="top" variant="temporary"
+          transitionDuration={{ appear: 100, enter: 500, exit: 500 }}
+          container={fitContainerRef.current}
+          ModalProps={{
+            container: fitContainerRef.current, disablePortal: true,
+            keepMounted: true, disableAutoFocus: true,
+            disableEnforceFocus: true, disableScrollLock: true
+          }}
+          sx={{
+            position: 'absolute', 
+            '& .MuiPaper-root': {
+              position: 'absolute'
+            }
+          }}
+        >
+          <ItemsTable itemsData={itemsData} useType='fitCard' itemClick={itemRedirect} itemRemove={null} />
+        </Drawer>
+        <Stepper
+          length={fitData.picnames ? fitData.picnames.length : 0} step={galleryIndex}
+          setter={setGalleryIndex} stickBottom={true}
+        />
+      </Card>
+    </>
+  );
 };
 
 export default FitCard;
