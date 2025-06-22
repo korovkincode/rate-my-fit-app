@@ -16,7 +16,7 @@ import { Fit } from '../types/fit';
 import { Item } from '../types/item';
 import { User } from '../types/user';
 
-import { sleep, getPfpToken } from '../utils';
+import { getPfpToken } from '../utils';
 
 import { getUser, getUserPfpDirect } from '../API/user';
 import { getUserFits } from '../API/fit';
@@ -59,7 +59,6 @@ const Profile = () => {
     setUserFits(null);
 
     const fetchUser = async () => {
-      await sleep(1000); //To test skeleton loading
       const userRequest = await getUser(userID, null);
       if (userRequest.status !== 200) {
         throw new Error(userRequest.description);
@@ -72,7 +71,6 @@ const Profile = () => {
     };
 
     const fetchFits = async () => {
-      await sleep(1000); //To test skeleton loading
       const fitsRequest = await getUserFits(userID);
       if (fitsRequest.status !== 200) {
         throw new Error(fitsRequest.description);

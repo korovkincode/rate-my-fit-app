@@ -1,8 +1,10 @@
+import { Dispatch, SetStateAction } from 'react';
 import secureLocalStorage from 'react-secure-storage';
 
 import { UserCredentials } from './types/user';
 import { Item } from './types/item';
 import { Review } from './types/review';
+import { SnackbarStatus } from './types/UI';
 
 export const getCredentials = () => {
   const storedCredentials = secureLocalStorage.getItem('userCredentials');
@@ -69,4 +71,12 @@ export const getAvgGrade = (reviews: Review[]) => {
 
 export const countPages = (total: number, perPage: number) => {
   return Math.floor((total - 1) / perPage) + 1;
+};
+
+export const failedRequest = (
+  snackbarSetter: Dispatch<SetStateAction<SnackbarStatus>>, message: string
+) => {
+  snackbarSetter({
+    open: true, message: message, color: 'error'
+  });
 };
