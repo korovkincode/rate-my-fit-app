@@ -72,7 +72,7 @@ async def get_user(
     if secret_token is not None and secret_token != user_data["secretToken"]:
         raise HTTPException(status_code=403, detail="Wrong secret token")
 
-    user_stats = utils.getUserStats(user_id)
+    user_stats = utils.get_user_stats(user_id)
     return {
         "message": "Successful retrieving",
         "data": {
