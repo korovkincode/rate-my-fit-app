@@ -1,7 +1,7 @@
 from typing import Optional
 
-from .abstract import AbstractModel
-from .user import UserCredentialsModel
+from models.abstract import AbstractModel
+from models.user import UserCredentialsModel
 
 
 class ReviewModel(AbstractModel):
