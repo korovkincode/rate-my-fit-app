@@ -14,7 +14,8 @@ router = APIRouter()
 
 @router.post("/add", response_model=None)
 async def add_fit(
-    fit_data: FitModel = Body(...), pics: list[UploadFile] = File(...)
+    fit_data: FitModel = Body(...),
+    pics: list[UploadFile] = File(...)
 ) -> HTTPException | dict:
     fit_data = fit_data.model_dump()
     if Database.Users.find_one(fit_data["userCredentials"]) is None:
@@ -52,9 +53,24 @@ async def get_fit(fit_id: str) -> HTTPException | dict:
     }
 
 
+@router.get("/{fit_id}/full", response_model=None)
+async def get_fit_full(fit_id: str) -> HTTPException | dict:
+    fit_data = Database.Fits.find_one({"fitID": fit_id}, {"_id": 0})
+    if fit_data is None:
+        raise HTTPException(status_code=404, detail="No such fit")
+    
+    ...
+
+    return {
+        "message": "Successful retrieving",
+        "data": fit_data
+    }
+
+
 @router.put("/{fit_id}", response_model=None)
 async def update_fit(
-    fit_id: str, append_pics: bool = False,
+    fit_id: str,
+    append_pics: bool = False,
     fit_data: FitModel = Body(...),
     pics: list[UploadFile] = File(...),
 ) -> HTTPException | dict:
@@ -109,10 +125,14 @@ async def get_user_fits(user_id: str) -> HTTPException | dict:
 
 @router.get("/all/", response_model=None)
 async def get_all_fits(
-    start: int, limit: int, sorting: str, direction: Literal["ASC", "DSC"]
+    start: int,
+    limit: int,
+    sorting: str,
+    direction: Literal["ASC", "DSC"]
 ) -> dict:
     query_fits = (
-        Database.Fits.find({}, {"_id": 0})
+        Database.Fits
+        .find({}, {"_id": 0})
         .sort(sorting, ASCENDING if direction == "ASC" else DESCENDING)
         .skip(start)
         .limit(limit)

@@ -3,16 +3,9 @@ import os
 
 from dotenv import load_dotenv
 from pymongo import MongoClient
+from pymongo.database import Database as MongoDB
+from pymongo.collection import Collection
 from pymongo.operations import SearchIndexModel
-
-
-class Singleton:
-    _instance = None
-
-    def __new__(cls, *args, **kwargs):
-        if not isinstance(cls._instance, cls):
-            cls._instance = object.__new__(cls, *args, **kwargs)
-        return cls._instance
 
 
 class Database:
@@ -23,11 +16,11 @@ class Database:
         load_dotenv()
         cls.__URI = os.getenv("DATABASE_URI")
         cls.Client = MongoClient(cls.__URI)
-        cls.DB = cls.Client.RateMyFit
-        cls.Users = cls.DB.Users
-        cls.Fits = cls.DB.Fits
-        cls.Reviews = cls.DB.Reviews
-        cls.Items = cls.DB.Items
+        cls.DB: MongoDB = cls.Client.RateMyFit
+        cls.Users: Collection = cls.DB.Users
+        cls.Fits: Collection = cls.DB.Fits
+        cls.Reviews: Collection = cls.DB.Reviews
+        cls.Items: Collection = cls.DB.Items
 
     @classmethod
     def update_items(cls, replace: bool = False):
