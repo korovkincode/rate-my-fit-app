@@ -1,6 +1,5 @@
 import os
 import uuid
-from typing import List
 
 from fastapi import HTTPException, UploadFile
 
@@ -15,7 +14,7 @@ def get_file_basename(filename: str) -> str:
     return filename[:filename.rindex(".")]
 
 
-def collect_pics(pics: list[UploadFile], pic_status: dict) -> List[str]:
+def collect_pics(pics: list[UploadFile], pic_status: dict) -> list[str]:
     if not pic_status["flag"] and pic_status.get("picnames", None):
         for picname in pic_status["picnames"]:
             os.remove(os.path.join("static", picname))
@@ -31,7 +30,7 @@ def collect_pics(pics: list[UploadFile], pic_status: dict) -> List[str]:
     return picnames
 
 
-def get_twin_id(user_id: str) -> HTTPException | str:
+def get_twin_id(user_id: str) -> str:
     if user_id.startswith("@"):
         twin_id = "userToken"
         user_data = Database.Users.find_one({"username": user_id[1:]})
@@ -46,7 +45,11 @@ def get_twin_id(user_id: str) -> HTTPException | str:
 
 
 def find_by_relation(
-    collection, condition: dict, hide: dict, start: int = None, limit: int = None
+    collection,
+    condition: dict,
+    hide: dict,
+    start: int = None,
+    limit: int = None
 ) -> list:
     result_start = start if start is not None else 0
 
@@ -59,10 +62,7 @@ def find_by_relation(
     return list(results_cursor)
 
 
-def check_items(items_id: List[str]) -> bool:
-    if len(items_id) > len(set(items_id)):
-        return False
-
+def check_items(items_id: list[str]) -> bool:
     check = True
     for item_id in items_id:
         if Database.Items.find_one({"itemID": item_id}) is None:
@@ -71,7 +71,7 @@ def check_items(items_id: List[str]) -> bool:
     return check
 
 
-def find_pfp(user_token: str) -> HTTPException | str:
+def find_pfp(user_token: str) -> str:
     pfp_files = os.listdir("pfp")
     for filename in pfp_files:
         if user_token == get_file_basename(filename):

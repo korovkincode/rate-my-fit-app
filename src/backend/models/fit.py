@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import Optional
 
 from .abstract import AbstractModel
 from .user import UserCredentialsModel
@@ -10,7 +10,7 @@ class FitModel(AbstractModel):
     title: str
     date: str
     description: Optional[str] = None
-    itemsID: Optional[List[str]] = None
+    itemsID: Optional[list[str]] = None
     totalPrice: int
     totalReviews: int
     avgGrade: float

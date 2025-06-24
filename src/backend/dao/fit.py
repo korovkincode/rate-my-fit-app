@@ -4,4 +4,4 @@ from config.database import Database
 
 class FitDAO(BaseDAO):
     def __init__(self):
-        self.super().__init__(Database.Fits)
+        super().__init__(Database.Fits)

@@ -1,7 +1,7 @@
 import json
 import os
-
 from dotenv import load_dotenv
+
 from pymongo import MongoClient
 from pymongo.database import Database as MongoDB
 from pymongo.collection import Collection
@@ -10,6 +10,11 @@ from pymongo.operations import SearchIndexModel
 
 class Database:
     __URI: str = ""
+    #For DAO
+    Users: Collection = None
+    Fits: Collection = None
+    Reviews: Collection = None
+    Items: Collection = None
 
     @classmethod
     def connect(cls):
