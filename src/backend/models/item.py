@@ -1,6 +1,6 @@
 from typing import Optional
 
-from .abstract import AbstractModel
+from models.abstract import AbstractModel
 
 
 class ItemModel(AbstractModel):
