@@ -1,8 +1,6 @@
 from fastapi import APIRouter, Depends
 
-from dao.review import ReviewDAO
-from dao.user import UserDAO
-from dao.fit import FitDAO
+from dao.aggregator import DAO
 from models.review import ReviewModel
 from services.review import ReviewService
 
@@ -11,7 +9,7 @@ router = APIRouter()
 
 
 def get_service() -> ReviewService:
-    return ReviewService(ReviewDAO(), UserDAO(), FitDAO())
+    return ReviewService(DAO())
 
 
 @router.post("/add", response_model=None)
