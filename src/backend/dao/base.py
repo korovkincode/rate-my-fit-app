@@ -11,10 +11,10 @@ class BaseDAO:
     def __init__(self, collection: Collection):
         self.collection = collection
 
-    def create_many(self, document: dict):
+    def create_one(self, document: dict):
         self.collection.insert_one(document)
 
-    def create(self, documents: list[dict]):
+    def create_many(self, documents: list[dict]):
         self.collection.insert_many(documents)
 
     def find_one(self, params: dict, projection: dict = DEFAULT_PROJECTION) -> dict:

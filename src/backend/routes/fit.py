@@ -3,8 +3,9 @@ from typing import Literal
 from fastapi import APIRouter, Body, File, UploadFile, Depends
 
 from dao.fit import FitDAO
-from dao.item import ItemDAO
 from dao.user import UserDAO
+from dao.item import ItemDAO
+from dao.review import ReviewDAO
 from models.fit import FitModel
 from services.fit import FitService
 
@@ -13,7 +14,7 @@ router = APIRouter()
 
 
 def get_service() -> FitService:
-    return FitService(FitDAO(), UserDAO(), ItemDAO())
+    return FitService(FitDAO(), UserDAO(), ItemDAO(), ReviewDAO())
 
 
 @router.post("/add", response_model=None)
