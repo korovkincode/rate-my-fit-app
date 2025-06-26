@@ -56,7 +56,7 @@ async def get_user_fits(
 
 @router.get("/all/", response_model=None)
 async def get_all_fits(
-    start: int,
+    skip: int,
     limit: int,
     sorting: str,
     direction: Literal["ASC", "DSC"],
@@ -64,7 +64,7 @@ async def get_all_fits(
 ) -> dict:
     return {
         "message": "Successful retrieving",
-        "data": service.get_all(start, limit, sorting, direction),
+        "data": service.get_all(skip, limit, sorting, direction),
     }
 
 

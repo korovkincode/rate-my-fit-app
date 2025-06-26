@@ -20,8 +20,24 @@ class BaseDAO:
     def find_one(self, params: dict, projection: dict = DEFAULT_PROJECTION) -> dict:
         return self.collection.find_one(params, projection)
 
-    def find_many(self, params: dict, projection: dict = DEFAULT_PROJECTION) -> Cursor:
-        return self.collection.find(params, projection)
+    def find_many(
+        self,
+        params: dict = {},
+        skip: int = None,
+        limit: int = None,
+        sorting: str = None,
+        direction_str: Literal["ASC", "DSC"] = None,
+    ) -> Cursor:
+        direction = {"ASC": ASCENDING, "DSC": DESCENDING}.get(direction_str)
+        query = self.collection.find(params, self.DEFAULT_PROJECTION)
+        if skip is not None:
+            query.skip(skip)
+        if limit is not None:
+            query.limit(limit)
+        if sorting is not None:
+            query.sort(sorting, direction)
+
+        return query
 
     def update_one(self, params: dict, document: dict = DEFAULT_PROJECTION):
         self.collection.find_one_and_replace(params, document)
@@ -32,15 +48,5 @@ class BaseDAO:
     def count(self, params: dict) -> int:
         return self.collection.count_documents(params)
 
-    def all(
-        self, start: int, limit: int, sorting: str, direction_str: Literal["ASC", "DSC"]
-    ) -> Cursor:
-        direction = ASCENDING if direction_str == "ASC" else DESCENDING
-        query_results = (
-            self.collection.find({}, self.DEFAULT_PROJECTION)
-            .sort(sorting, direction)
-            .skip(start)
-            .limit(limit)
-        )
-
-        return query_results
+    def distinct(self, field: str) -> Cursor:
+        return self.collection.distinct(field)

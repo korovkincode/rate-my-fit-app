@@ -85,9 +85,9 @@ class FitService:
         return list(self.dao.fits.find_many({"authorToken": author_token}))
 
     def get_all(
-        self, start: int, limit: int, sorting: str, direction: Literal["ASC", "DSC"]
+        self, skip: int, limit: int, sorting: str, direction: Literal["ASC", "DSC"]
     ) -> list[dict]:
-        return list(self.dao.fits.all(start, limit, sorting, direction))
+        return list(self.dao.fits.find_many({}, skip, limit, sorting, direction))
 
     def get_total(self) -> int:
         return self.dao.fits.count({})
