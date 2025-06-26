@@ -20,7 +20,8 @@ def parse_page(page: int):
     page_html = driver.page_source
     page_soup = BS(page_html, "html.parser")
 
-    for catalog_item in page_soup.find("div", {"id": "productlistcontainer"}).find_all("li"):
+    catalog_container = page_soup.find("div", {"id": "productlistcontainer"})
+    for catalog_item in catalog_container.find_all("li"):
         if catalog_item.get("li-name") is None:
             continue
 
@@ -28,12 +29,14 @@ def parse_page(page: int):
         item_img = catalog_item.get("li-imageurl")
         item_price = float(catalog_item.get("li-price"))
         item_category = catalog_item.get("li-category")
-        collected_data[BRAND_NAME].append({
-            "name": item_name,
-            "img": item_img,
-            "price": item_price,
-            "category": item_category
-        })
+        collected_data[BRAND_NAME].append(
+            {
+                "name": item_name,
+                "img": item_img,
+                "price": item_price,
+                "category": item_category,
+            }
+        )
 
 
 driver = webdriver.Chrome(DRIVER_PATH)

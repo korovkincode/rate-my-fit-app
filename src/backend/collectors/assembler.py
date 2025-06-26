@@ -25,11 +25,13 @@ for filename in TARGET_FILES:
 
     for item_data in file_data[brand_name]:
         item_data["price"] = int(item_data["price"] + 0.5)  # To round prices
-        general_data.append({
-            "itemID": uuid.uuid4().hex,
-            "brand": brand_name.replace("-", " "),
-            **item_data
-        })
+        general_data.append(
+            {
+                "itemID": uuid.uuid4().hex,
+                "brand": brand_name.replace("-", " "),
+                **item_data,
+            }
+        )
 
 general_file_path = os.path.join(TARGET_FOLDER, RESULT_FILE)
 with open(general_file_path, "w", encoding="utf-8") as general_file:

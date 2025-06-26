@@ -7,11 +7,11 @@ from config.database import Database
 
 
 def get_file_extension(filename: str) -> str:
-    return filename[filename.rindex("."):]
+    return filename[filename.rindex(".") :]
 
 
 def get_file_basename(filename: str) -> str:
-    return filename[:filename.rindex(".")]
+    return filename[: filename.rindex(".")]
 
 
 def collect_pics(pics: list[UploadFile], pic_status: dict) -> list[str]:
@@ -45,11 +45,7 @@ def get_twin_id(user_id: str) -> str:
 
 
 def find_by_relation(
-    collection,
-    condition: dict,
-    hide: dict,
-    start: int = None,
-    limit: int = None
+    collection, condition: dict, hide: dict, start: int = None, limit: int = None
 ) -> list:
     result_start = start if start is not None else 0
 

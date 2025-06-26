@@ -36,7 +36,9 @@ def parse_page(page: int):
         item_name = catalog_item.find(
             "p", {"class": "product-preview__name"}
         ).text.strip()
-        item_img = catalog_item.find("img", {"class": "product-preview__image"}).get("src")
+        item_img = catalog_item.find("img", {"class": "product-preview__image"}).get(
+            "src"
+        )
         item_price = catalog_item.find_all("span", {"class": "product-preview__price"})[
             -1
         ].text.strip()
@@ -45,11 +47,9 @@ def parse_page(page: int):
         if item_img is None:
             raise RuntimeError("NO IMAGE URL!")
 
-        collected_data[BRAND_NAME].append({
-            "name": item_name,
-            "img": item_img,
-            "price": item_price
-        })
+        collected_data[BRAND_NAME].append(
+            {"name": item_name, "img": item_img, "price": item_price}
+        )
 
 
 driver = webdriver.Chrome(DRIVER_PATH)

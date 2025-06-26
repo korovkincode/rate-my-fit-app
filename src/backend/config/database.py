@@ -10,7 +10,7 @@ from pymongo.operations import SearchIndexModel
 
 class Database:
     __URI: str = ""
-    #For DAO
+    # For DAO
     Users: Collection = None
     Fits: Collection = None
     Reviews: Collection = None
