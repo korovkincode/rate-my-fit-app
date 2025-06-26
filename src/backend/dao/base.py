@@ -22,14 +22,17 @@ class BaseDAO:
 
     def find_many(
         self,
-        params: dict = {},
+        params: dict | None = None,
         skip: int = None,
         limit: int = None,
         sorting: str = None,
         direction_str: Literal["ASC", "DSC"] = None,
     ) -> Cursor:
+        if params is None:
+            params = {}
         direction = {"ASC": ASCENDING, "DSC": DESCENDING}.get(direction_str)
         query = self.collection.find(params, self.DEFAULT_PROJECTION)
+
         if skip is not None:
             query.skip(skip)
         if limit is not None:
@@ -39,7 +42,7 @@ class BaseDAO:
 
         return query
 
-    def update_one(self, params: dict, document: dict = DEFAULT_PROJECTION):
+    def update_one(self, params: dict, document: dict):
         self.collection.find_one_and_replace(params, document)
 
     def delete_one(self, params: dict):
@@ -48,5 +51,8 @@ class BaseDAO:
     def count(self, params: dict) -> int:
         return self.collection.count_documents(params)
 
-    def distinct(self, field: str) -> Cursor:
+    def distinct(self, field: str) -> list:
         return self.collection.distinct(field)
+
+    def aggregate(self, pipeline: list[dict]) -> Cursor:
+        return self.collection.aggregate(pipeline)
