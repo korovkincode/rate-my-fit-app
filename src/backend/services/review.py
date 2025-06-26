@@ -18,7 +18,7 @@ class ReviewService:
 
         user_credentials = review_data["userCredentials"]
         if not self.dao.users.count(user_credentials):
-            raise HTTPException(status_code=404, detail="No such user")
+            raise HTTPException(status_code=401, detail="No such user")
         if not self.dao.fits.count({"fitID": review_data["fitID"]}):
             raise HTTPException(status_code=404, detail="No such fit")
 
@@ -43,7 +43,7 @@ class ReviewService:
     def get_by_user(self, user_id: str) -> list[dict]:
         author_token = id_to_token(user_id, self.dao)
         if not self.dao.users.count({"userToken": author_token}):
-            raise HTTPException(status_code=404, detail="No such user")
+            raise HTTPException(status_code=401, detail="No such user")
 
         return list(self.dao.reviews.find_many({"authorToken": author_token}))
 

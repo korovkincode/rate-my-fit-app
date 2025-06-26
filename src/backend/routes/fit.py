@@ -1,6 +1,6 @@
 from typing import Literal
 
-from fastapi import APIRouter, Body, File, UploadFile, Depends
+from fastapi import APIRouter, Body, Depends, File, UploadFile
 
 from dao.aggregator import DAO
 from models.fit import FitModel

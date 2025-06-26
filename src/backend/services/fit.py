@@ -80,7 +80,7 @@ class FitService:
         author_token = id_to_token(user_id, self.dao)
 
         if not self.dao.users.count({"userToken": author_token}):
-            raise HTTPException(status_code=404, detail="No such user")
+            raise HTTPException(status_code=401, detail="No such user")
 
         return list(self.dao.fits.find_many({"authorToken": author_token}))
 
