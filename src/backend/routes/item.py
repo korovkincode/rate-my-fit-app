@@ -55,11 +55,11 @@ async def get_all_brands(service: ItemService = Depends(get_service)) -> dict:
     return {"message": "Successful retrieving", "data": service.get_brands()}
 
 
-@router.get("/search", response_model=None)
+@router.get("/search/name", response_model=None)
 async def search_item(
-    item_name: str, limit: int = 15, service: ItemService = Depends(get_service)
+    name: str, limit: int = 15, service: ItemService = Depends(get_service)
 ) -> dict:
     return {
         "message": "Successful retrieving",
-        "data": service.search(item_name, limit),
+        "data": service.search(name, limit),
     }

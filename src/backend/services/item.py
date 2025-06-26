@@ -43,7 +43,7 @@ class ItemService:
     def get_brands(self) -> list[str]:
         return list(self.dao.items.distinct("brand"))
 
-    def search(self, name: str, limit: int) -> dict:
+    def search(self, name: str, limit: int) -> list[dict]:
         pipeline = [
             {
                 "$search": {
@@ -55,4 +55,4 @@ class ItemService:
             {"$project": self.dao.items.DEFAULT_PROJECTION},
         ]
 
-        return self.dao.items.aggregate(pipeline)
+        return list(self.dao.items.aggregate(pipeline))
