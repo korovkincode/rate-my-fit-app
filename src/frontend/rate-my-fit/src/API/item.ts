@@ -45,10 +45,10 @@ export const getAllBrands = async () => {
   return response;
 };
 
-export const searchItemName = async (itemName: string, limit: number) => {
+export const searchItemName = async (name: string, limit: number) => {
   const response = await APICall({
     method: 'GET',
-    path: `/item/search/name?itemName=${itemName}&limit=${limit}`,
+    path: `/item/search/name?name=${name}&limit=${limit}`,
     headers: null,
     body: null,
     multipart: false
