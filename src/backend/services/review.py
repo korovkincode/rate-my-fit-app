@@ -3,7 +3,8 @@ import uuid
 from fastapi import HTTPException
 
 from dao.aggregator import DAO
-from services.helpers.user import id_to_token
+from services.helpers.user import id_to_token, get_public_data
+from services.helpers.review import get_fit_reviews
 
 
 class ReviewService:
@@ -47,8 +48,12 @@ class ReviewService:
 
         return list(self.dao.reviews.find_many({"authorToken": author_token}))
 
-    def get_on_fit(self, fit_id: str) -> list[dict]:
-        if not self.dao.fits.count({"fitID": fit_id}):
-            raise HTTPException(status_code=404, detail="No such fit")
+    def get_on_fit(self, fit_id: str, full: bool) -> list[dict]:
+        reviews_data = get_fit_reviews(fit_id, self.dao)
 
-        return list(self.dao.reviews.find_many({"fitID": fit_id}))
+        if full:
+            # Retrieving every reviewer public data
+            for review in reviews_data:
+                review["author"] = get_public_data(review["authorToken"], self.dao)
+
+        return reviews_data

@@ -1,5 +1,6 @@
 from fastapi import HTTPException
 
+import utils
 from dao.aggregator import DAO
 
 
@@ -32,4 +33,18 @@ def get_user_stats(user_id: str, dao: DAO) -> dict:
     return {
         "fits": dao.fits.count({"authorToken": user_token}),
         "reviews": dao.reviews.count({"authorToken": user_token}),
+    }
+
+
+def get_public_data(user_id: str, dao: DAO) -> dict:
+    user_token = id_to_token(user_id, dao)
+    user_data = dao.users.find_one({"userToken": user_token})
+
+    if user_data is None:
+        return HTTPException(status_code=404, detail="No such user")
+
+    return {
+        "username": user_data["username"],
+        "bio": user_data.get("bio"),
+        "pfpLink": utils.find_pfp(user_token),
     }

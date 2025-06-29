@@ -6,7 +6,7 @@ from fastapi import HTTPException, UploadFile
 import utils
 from dao.aggregator import DAO
 from services.helpers.fit import get_fit_stats
-from services.helpers.user import id_to_token
+from services.helpers.user import id_to_token, get_public_data
 from services.helpers.item import check_items
 
 
@@ -40,8 +40,15 @@ class FitService:
         if fit_data is None:
             raise HTTPException(status_code=404, detail="No such fit")
 
-        if full:  # User and Item services should be implemented
-            ...
+        if full:
+            # Retrieving full author data
+            author_token = fit_data["authorToken"]
+            fit_data["author"] = get_public_data(author_token, self.dao)
+
+            # Retrieving full items data
+            fit_data["items"] = []
+            for item_id in fit_data["itemsID"]:
+                fit_data["items"].append(self.dao.items.find_one({"itemID": item_id}))
 
         return fit_data
 

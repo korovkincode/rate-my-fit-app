@@ -1,3 +1,5 @@
+from fastapi import HTTPException
+
 from dao.aggregator import DAO
 
 
@@ -8,3 +10,10 @@ def get_fit_reviews_stats(fit_id: str, dao: DAO) -> dict:
     avg_grade = grades_sum / total_reviews if total_reviews else 0
 
     return {"totalReviews": total_reviews, "avgGrade": avg_grade}
+
+
+def get_fit_reviews(fit_id: str, dao: DAO) -> list[dict]:
+    if not dao.fits.count({"fitID": fit_id}):
+        raise HTTPException(status_code=404, detail="No such fit")
+
+    return list(dao.reviews.find_many({"fitID": fit_id}))

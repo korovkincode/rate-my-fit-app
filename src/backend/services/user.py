@@ -5,7 +5,7 @@ from fastapi import HTTPException, UploadFile
 
 import utils
 from dao.aggregator import DAO
-from services.helpers.user import get_user_stats, id_to_token
+from services.helpers.user import get_user_stats, id_to_token, get_public_data
 
 
 class UserService:
@@ -37,20 +37,13 @@ class UserService:
             raise HTTPException(status_code=500, detail="Could not signup a user")
 
     def get(self, user_id: str, secret_token: str | None) -> dict:
-        params = projection = {}
         if user_id.startswith("@") or secret_token is None:
-            # Retrieving public info
-            if user_id.startswith("@"):
-                params = {"username": user_id[1:]}
-            else:
-                params = {"userToken": user_id}
-            projection = {"secretToken": 0, "password": 0}
+            # Retrieving public data
+            user_data = get_public_data(user_id, self.dao)
         else:
-            # Retrieving full info
-            params = {"userToken": user_id}
-        projection["_id"] = 0
+            # Retrieving full data
+            user_data = self.dao.users.find_one({"userToken": user_id})
 
-        user_data = self.dao.users.find_one(params, projection)
         if user_data is None:
             raise HTTPException(status_code=404, detail="No such user")
         if secret_token is not None and secret_token != user_data["secretToken"]:

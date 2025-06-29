@@ -38,6 +38,9 @@ async def get_user_reviews(
 
 @router.get("/on/{fit_id}", response_model=None)
 async def get_fit_reviews(
-    fit_id: str, service: ReviewService = Depends(get_service)
+    fit_id: str, full: bool = False, service: ReviewService = Depends(get_service)
 ) -> dict:
-    return {"message": "Successful retrieving", "data": service.get_on_fit(fit_id)}
+    return {
+        "message": "Successful retrieving",
+        "data": service.get_on_fit(fit_id, full),
+    }
