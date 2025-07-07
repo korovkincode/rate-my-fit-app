@@ -1,3 +1,6 @@
+import { UserPreview } from "./user";
+import { Item } from "./item";
+
 export type Fit = {
   fitID: string,
   title: string,
@@ -8,7 +11,9 @@ export type Fit = {
   picnames: string[],
   totalPrice: number,
   totalReviews: number,
-  avgGrade: number
+  avgGrade: number,
+  author: UserPreview,
+  items: Item[]
 };
 
 export type Form = {

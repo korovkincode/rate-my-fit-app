@@ -40,7 +40,7 @@ export const getUserReviews = async (userID: string) => {
 export const getFitReviews = async (fitID: string) => {
   const response = await APICall({
     method: 'GET',
-    path: `/review/on/${fitID}`,
+    path: `/review/on/${fitID}?full=true`,
     headers: null,
     body: null,
     multipart: false

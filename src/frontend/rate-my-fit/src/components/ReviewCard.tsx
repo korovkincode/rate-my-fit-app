@@ -24,21 +24,17 @@ const ShiningStar = styled('span')(() => ({
 }));
 
 interface ReviewCardProps {
-  reviewData: Review,
-  authorData: {
-    username: string,
-    pfpLink: string
-  }
+  reviewData: Review
 };
 
-const ReviewCard = ({ reviewData, authorData }: ReviewCardProps) => (
+const ReviewCard = ({ reviewData }: ReviewCardProps) => (
   <Card sx={{ borderRadius: 5, mb: 2 }}>
     <CardHeader
       avatar={
-        <LinkDOM to={`/user/@${authorData.username}`}>
+        <LinkDOM to={`/user/@${reviewData.author.username}`}>
           <Avatar
-            alt={authorData.username}
-            src={authorData.pfpLink}
+            alt={reviewData.author.username}
+            src={reviewData.author.pfpLink}
             sx={{ mr: 0.5, animation: `${Shake(1.1, 3)} 2s ease infinite` }} 
           />
         </LinkDOM>
@@ -47,7 +43,7 @@ const ReviewCard = ({ reviewData, authorData }: ReviewCardProps) => (
         title: {fontSize: 24, fontWeight: 700},
         subheader: {fontSize: 14, fontWeight: 300}
       }}
-      title={authorData.username} subheader={formatDate(reviewData.date)}
+      title={reviewData.author.username} subheader={formatDate(reviewData.date)}
       action={
         reviewData.grade
           ?

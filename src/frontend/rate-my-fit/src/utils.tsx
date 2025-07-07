@@ -6,6 +6,8 @@ import { Item } from './types/item';
 import { Review } from './types/review';
 import { SnackbarStatus } from './types/UI';
 
+import { API_URL } from './API/API';
+
 export const getCredentials = () => {
   const storedCredentials = secureLocalStorage.getItem('userCredentials');
   if (storedCredentials === null) {
@@ -79,4 +81,8 @@ export const failedRequest = (
   snackbarSetter({
     open: true, message: message, color: 'error'
   });
+};
+
+export const getFullPfpPath = (pfpFilename: string) => {
+  return `${API_URL}/pfp/${pfpFilename}`;
 };

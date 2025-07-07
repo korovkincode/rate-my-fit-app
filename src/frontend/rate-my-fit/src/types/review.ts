@@ -1,4 +1,4 @@
-import { UserCredentials } from './user';
+import { UserCredentials, UserPreview } from './user';
 
 export type Review = {
   fitID: string,
@@ -6,7 +6,8 @@ export type Review = {
   date: string,
   comment: string | null,
   reviewID: string,
-  authorToken: string
+  authorToken: string,
+  author: UserPreview
 };
 
 export type Form = {

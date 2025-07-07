@@ -3,21 +3,12 @@ import { Review } from '../types/review';
 import ReviewCard from './ReviewCard';
 
 interface ReviewsTableProps {
-  reviewsData: Review[],
-  reviewersData: {
-    [userID: string]: {
-      username: string,
-      pfpLink: string
-    }
-  },
+  reviewsData: Review[]
 };
 
-const ReviewsTable = ({ reviewsData, reviewersData }: ReviewsTableProps) => (
+const ReviewsTable = ({ reviewsData }: ReviewsTableProps) => (
   reviewsData.map((reviewData, index) => 
-    <ReviewCard
-      key={index} reviewData={reviewData}
-      authorData={reviewersData[reviewData.authorToken]}
-    />
+    <ReviewCard key={index} reviewData={reviewData} />
   )
 );
 

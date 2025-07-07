@@ -15,7 +15,7 @@ export const addFit = async (fitData: FormData) => {
 export const getFit = async (fitID: string) => {
   const response = await APICall({
     method: 'GET',
-    path: `/fit/${fitID}`,
+    path: `/fit/${fitID}?full=true`,
     headers: null,
     body: null,
     multipart: false

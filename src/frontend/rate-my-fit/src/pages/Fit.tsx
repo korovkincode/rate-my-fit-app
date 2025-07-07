@@ -24,15 +24,13 @@ import { useTheme } from '@mui/material/styles';
 import type { Fit as FitT } from '../types/fit';
 import type { Item } from '../types/item';
 import type { Review } from '../types/review';
-import type { User, UserPreview } from '../types/user';
 import type { SnackbarStatus } from '../types/UI';
 
-import { formatDate, getTodayDate, failedRequest } from '../utils';
+import { formatDate, getTodayDate, failedRequest, getFullPfpPath } from '../utils';
 
 import { API_URL } from '../API/API';
 import { getFit } from '../API/fit';
-import { getItem } from '../API/item';
-import { getUser, getUserPfpDirect } from '../API/user';
+import { getUser } from '../API/user';
 import { addReview, getFitReviews } from '../API/review';
 
 import { AuthContext } from '../context';
@@ -80,116 +78,46 @@ const Fit = () => {
   }
 
   const [fitData, setFitData] = useState<FitT | null>(null);
-  const [authorData, setAuthorData] = useState<User | null>(null);
-  const [authorPfpLink, setAuthorPfpLink] = useState<string | null>(null);
-  const [itemsData, setItemsData] = useState<{
-    [itemID: string]: Item
-  } | null>(null);
   const [reviewsData, setReviewsData] = useState<Review[] | null>(null);
-  const [reviewersData, setReviewersData] = useState<{
-    [userID: string]: UserPreview
-  } | null>(null);
 
   const [galleryIndex, setGalleryIndex] = useState<number>(0);
   const navigate = useNavigate();
   const itemRedirect = (itemData: Item) => navigate(`/item/${itemData.itemID}`);
 
-  const fitPromise = () => new Promise((resolve, reject) => {
-    (async () => {
-      const fitRequest = await getFit(fitID);
-      if (fitRequest.status !== 200) {
-        reject(fitRequest.description);
-      }
-      resolve(fitRequest.data);
-    })();
-  }).then(
-    data => {
-      const fit = data as FitT;
-      setFitData(fit);
-      (async () =>
-        setAuthorPfpLink(await getUserPfpDirect(fit.authorToken))
-      )();
-
-      new Promise((resolve, reject) => {
-        (async () => {
-          const authorRequest = await getUser(fit.authorToken, null);
-          if (authorRequest.status !== 200) {
-            reject(authorRequest.description);
-          }
-          resolve(authorRequest.data);
-        })();
-      }).then(
-        data => setAuthorData(data as User),
-        error => failedRequest(setSnackbarStatus, error)
-      );
-
-      const tempItemsData = {} as { [itemID: string]: Item };
-      Promise.all(
-        fit.itemsID.map((itemID) =>
-          new Promise((resolve, reject) => {
-            (async () => {
-              const itemRequest = await getItem(itemID);
-              if (itemRequest.status !== 200) {
-                reject(itemRequest.description);
-              }
-              resolve(itemRequest.data);
-            })();
-          }).then(
-            data => tempItemsData[itemID] = data as Item,
-            error => failedRequest(setSnackbarStatus, error)
-          )
-        )
-      ).then(
-        () => setItemsData(tempItemsData),
-        error => failedRequest(setSnackbarStatus, error)
-      );
-    },
-    error => failedRequest(setSnackbarStatus, error)
-  );
-
-  const reviewsPromise = () => new Promise((resolve, reject) => {
-    (async () => {
-      const reviewsRequest = await getFitReviews(fitID);
-      if (reviewsRequest.status !== 200) {
-        reject(reviewsRequest.description);
-      }
-      resolve(reviewsRequest.data);
-    })();
-  }).then(
-    data => {
-      const reviews = data as Review[];
-      setReviewsData(reviews.reverse());
-
-      const tempReviewersData = {} as { [userID: string]: UserPreview };
-      Promise.all(
-        reviews.map(async (review) => 
-          tempReviewersData[review.authorToken] = await fetchReviewer(review.authorToken)
-        )
-      ).then(
-        () => setReviewersData(tempReviewersData),
-        error => failedRequest(setSnackbarStatus, error)
-      );
-    },
-    error => failedRequest(setSnackbarStatus, error)
-  );
-
-  const fetchReviewer = async (userToken: string) => {
-    const reviewerRequest = await getUser(userToken, null);
-    if (reviewerRequest.status !== 200) {
-      failedRequest(setSnackbarStatus, reviewerRequest.description);
-      throw new Error(reviewerRequest.description);
+  const fetchFit = async () => {
+    const fitRequest = await getFit(fitID);
+    if (fitRequest.status !== 200) {
+      setSnackbarStatus({
+        open: true, message: fitRequest.description, color: 'error'
+      });
+      throw new Error(fitRequest.description);
     }
-    return {
-      username: reviewerRequest.data.username,
-      pfpLink: await getUserPfpDirect(userToken)
-    };
+    
+    fitRequest.data.author.pfpLink = getFullPfpPath(fitRequest.data.author.pfpLink);
+    setFitData(fitRequest.data);
+  };
+
+  const fetchReviews = async () => {
+    const reviewsRequest = await getFitReviews(fitID);
+    if (reviewsRequest.status !== 200) {
+      setSnackbarStatus({
+        open: true, message: reviewsRequest.description, color: 'error'
+      });
+      throw new Error(reviewsRequest.description);
+    }
+
+    for (let reviewIndex = 0; reviewIndex < reviewsRequest.data.length; reviewIndex++) {
+      const reviewPfpLink = reviewsRequest.data[reviewIndex].author.pfpLink;
+      reviewsRequest.data[reviewIndex].author.pfpLink = getFullPfpPath(reviewPfpLink);
+    }
+    setReviewsData(reviewsRequest.data);
   };
 
   useEffect(() => {
     setFitData(null);
-    setItemsData(null);
+    setReviewsData(null);
 
-    Promise.all([fitPromise(), reviewsPromise()]);
+    Promise.all([fetchFit(), fetchReviews()]);
   }, [fitID]);
 
   const reviewCommentEl = useRef<HTMLInputElement>(null);
@@ -223,7 +151,8 @@ const Fit = () => {
       failedRequest(setSnackbarStatus, reviewRequest.description);
     } else {
       const review = reviewRequest.data as Review;
-      const newReviewer = await fetchReviewer(userCredentials.userToken);
+      const newReviewer = await getUser(userCredentials.userToken, null);
+      review.author = newReviewer;
       
       if (reviewCommentEl.current) {
         reviewCommentEl.current.value = '';
@@ -232,9 +161,6 @@ const Fit = () => {
       setReviewsData([review, ...(reviewsData || [])]);
       setSnackbarStatus({
         open: true, message: 'Successfully added the review', color: 'success'
-      });
-      setReviewersData({
-        ...reviewersData, [userCredentials.userToken]: newReviewer
       });
     }
   };
@@ -247,7 +173,7 @@ const Fit = () => {
         pl: 0, pr: 0,
       }}>
         <Stack spacing={0} justifyContent="center" flexDirection={{ xs: 'column', sm: 'row' }}>
-          {fitData && authorData && authorPfpLink && itemsData
+          {fitData
             ?
             <>
               <Stack spacing={0} flexDirection="column">
@@ -278,8 +204,8 @@ const Fit = () => {
                       pt: '5px', pb: '5px'
                     }}>
                       <Avatar
-                        alt={authorData.username}
-                        src={authorPfpLink}
+                        alt={fitData.author.username}
+                        src={getFullPfpPath(fitData.author.pfpLink)}
                         sx={{ animation: `${Shake(1.1, 3)} 2s ease infinite` }} 
                       />
                       <Stack>
@@ -304,7 +230,7 @@ const Fit = () => {
               }}
             />
           }
-          {fitData && authorData && authorPfpLink && itemsData
+          {fitData
             ?
             <>
               <Card sx={{
@@ -314,10 +240,10 @@ const Fit = () => {
                   <CardHeader
                     sx={{ ml: '16px' }}
                     avatar={
-                      <LinkDOM to={`/user/@${authorData.username}`}>
+                      <LinkDOM to={`/user/@${fitData.author.username}`}>
                         <Avatar
-                          alt={authorData.username}
-                          src={authorPfpLink}
+                          alt={fitData.author.username}
+                          src={fitData.author.pfpLink}
                           sx={{ mr: 0.5, animation: `${Shake(1.1, 3)} 2s ease infinite` }} 
                         />
                       </LinkDOM>
@@ -333,7 +259,9 @@ const Fit = () => {
                   bgcolor: 'custom.white', maxHeight: '414px', height: '100%', overflow: 'auto',
                   pt: {xs: authorCardHeight + 4, sm: 0}
                 }}>
-                  <ItemsTable itemsData={itemsData} useType='fitCard' itemClick={itemRedirect} itemRemove={null} />
+                  {fitData.items &&
+                    <ItemsTable itemsData={fitData.items} useType='fitCard' itemClick={itemRedirect} itemRemove={null} />
+                  }
                 </Box>
               </Card>
             </>
@@ -348,7 +276,7 @@ const Fit = () => {
         </Stack>
         <Divider variant="middle" sx={{ mt: 6, borderBottomWidth: 3 }} />
         <Container maxWidth="sm">
-          {fitData && authorData && authorPfpLink && reviewsData && reviewersData
+          {fitData && reviewsData
             ?
             <>
               {fitData.description &&
@@ -359,12 +287,9 @@ const Fit = () => {
                     date: fitData.date,
                     comment: fitData.description,
                     reviewID: fitID,
-                    authorToken: fitData.authorToken
-                  }} authorData={{
-                    username: authorData.username,
-                    pfpLink: authorPfpLink
-                  }}
-                  />
+                    authorToken: fitData.authorToken,
+                    author: fitData.author
+                  }} />
                 </Box>
               }
               <Stack direction="column" sx={{ mt: 4, mb: 5 }}>
@@ -403,9 +328,7 @@ const Fit = () => {
                   </Typography>
                 }
               </Box>
-              <ReviewsTable
-                reviewsData={reviewsData} reviewersData={reviewersData}
-              />
+              <ReviewsTable reviewsData={reviewsData} />
             </>
             :
             <>
