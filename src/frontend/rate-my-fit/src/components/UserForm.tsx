@@ -27,6 +27,7 @@ const UserForm = ({ actionType }: UserFormProps) => {
   if (!authContext) {
     throw new Error('AuthContext is not defined');
   }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
   const [_, setUserCredentials] = authContext;
 
   const handleForm = async (event: FormEvent) => {

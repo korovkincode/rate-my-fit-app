@@ -1,12 +1,17 @@
 import { Dispatch, SetStateAction } from 'react';
 import secureLocalStorage from 'react-secure-storage';
 
-import { UserCredentials } from './types/user';
+import { UserCredentials, UserPreview } from './types/user';
 import { Item } from './types/item';
 import { Review } from './types/review';
 import { SnackbarStatus } from './types/UI';
 
 import { API_URL } from './API/API';
+
+type EntityWithAuthor = {
+  author: UserPreview;
+  [key: string]: any;
+};
 
 export const getCredentials = () => {
   const storedCredentials = secureLocalStorage.getItem('userCredentials');
@@ -85,4 +90,12 @@ export const failedRequest = (
 
 export const getFullPfpPath = (pfpFilename: string) => {
   return `${API_URL}/pfp/${pfpFilename}`;
+};
+
+export const convertPfpList = (entities: EntityWithAuthor[]) => {
+  for (let entityIndex = 0; entityIndex < entities.length; entityIndex++) {
+    const pfpLink = entities[entityIndex].author.pfpLink;
+    entities[entityIndex].author.pfpLink = getFullPfpPath(pfpLink);
+  }
+  return entities;
 };

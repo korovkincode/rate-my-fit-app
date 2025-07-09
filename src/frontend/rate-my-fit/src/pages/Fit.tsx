@@ -26,7 +26,7 @@ import type { Item } from '../types/item';
 import type { Review } from '../types/review';
 import type { SnackbarStatus } from '../types/UI';
 
-import { formatDate, getTodayDate, failedRequest, getFullPfpPath } from '../utils';
+import { formatDate, getTodayDate, failedRequest, convertPfpList, getFullPfpPath } from '../utils';
 
 import { API_URL } from '../API/API';
 import { getFit } from '../API/fit';
@@ -69,6 +69,7 @@ const Fit = () => {
   if (!authContext) {
     throw new Error('AuthContext is not defined');
   }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
   const [userCredentials, _] = authContext;
 
   const params = useParams();
@@ -106,10 +107,7 @@ const Fit = () => {
       throw new Error(reviewsRequest.description);
     }
 
-    for (let reviewIndex = 0; reviewIndex < reviewsRequest.data.length; reviewIndex++) {
-      const reviewPfpLink = reviewsRequest.data[reviewIndex].author.pfpLink;
-      reviewsRequest.data[reviewIndex].author.pfpLink = getFullPfpPath(reviewPfpLink);
-    }
+    reviewsRequest.data = convertPfpList(reviewsRequest.data);
     setReviewsData(reviewsRequest.data);
   };
 
@@ -205,7 +203,7 @@ const Fit = () => {
                     }}>
                       <Avatar
                         alt={fitData.author.username}
-                        src={getFullPfpPath(fitData.author.pfpLink)}
+                        src={fitData.author.pfpLink}
                         sx={{ animation: `${Shake(1.1, 3)} 2s ease infinite` }} 
                       />
                       <Stack>

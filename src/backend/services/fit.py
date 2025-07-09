@@ -92,9 +92,22 @@ class FitService:
         return list(self.dao.fits.find_many({"authorToken": author_token}))
 
     def get_all(
-        self, skip: int, limit: int, sorting: str, direction: Literal["ASC", "DSC"]
+        self,
+        skip: int,
+        limit: int,
+        sorting: str,
+        direction: Literal["ASC", "DSC"],
+        full: bool,
     ) -> list[dict]:
-        return list(self.dao.fits.find_many({}, skip, limit, sorting, direction))
+        fits_data = list(self.dao.fits.find_many({}, skip, limit, sorting, direction))
+
+        if not full:
+            return fits_data
+
+        for fit_index in range(len(fits_data)):
+            fit_id = fits_data[fit_index]["fitID"]
+            fits_data[fit_index] = self.get(fit_id, True)
+        return fits_data
 
     def get_total(self) -> int:
         return self.dao.fits.count({})

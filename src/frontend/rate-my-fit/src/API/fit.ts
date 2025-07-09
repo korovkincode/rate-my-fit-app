@@ -43,7 +43,7 @@ export const getUserFits = async (userID: string) => {
 export const getAllFits = async (skip: number, limit: number, sorting: string, direction: string) => {
   const response = await APICall({
     method: 'GET',
-    path: `/fit/all/?skip=${skip}&limit=${limit}&sorting=${sorting}&direction=${direction}`,
+    path: `/fit/all/?skip=${skip}&limit=${limit}&sorting=${sorting}&direction=${direction}&full=true`,
     headers: null,
     body: null,
     multipart: false

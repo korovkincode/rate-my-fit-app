@@ -30,7 +30,7 @@ import { SnackbarStatus } from '../types/UI';
 import { Form, FormType } from '../types/fit';
 import { Item } from '../types/item';
 
-import { capitalize, lastElement, getTodayDate, convertItemsList } from '../utils';
+import { capitalize, lastElement, getTodayDate } from '../utils';
 
 import { addFit } from '../API/fit';
 import { searchItemName } from '../API/item';
@@ -151,6 +151,7 @@ const FitForm = ({ actionType, openSetter, snackbarSetter }: FitFormProps) => {
     };
     const formData = new FormData();
     formData.append('fitData', JSON.stringify(requestBody));
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
     fitData.pics.forEach((pic, _) => {
       formData.append('pics', new File([pic], pic.name));
     });
@@ -272,7 +273,7 @@ const FitForm = ({ actionType, openSetter, snackbarSetter }: FitFormProps) => {
               overflow: 'auto', borderRadius: 6, border: '1px solid #000'
             }}>
               <ItemsTable
-                itemsData={convertItemsList(queryItems)} useType='fitForm-search'
+                itemsData={queryItems} useType='fitForm-search'
                 itemClick={chooseItem} itemRemove={null}
               />
             </Paper>
@@ -288,7 +289,7 @@ const FitForm = ({ actionType, openSetter, snackbarSetter }: FitFormProps) => {
               overflow: 'auto', borderRadius: 6, border: '1px solid #000', mt: 2
             }}>
               <ItemsTable
-                itemsData={itemsCache} useType='fitForm-added'
+                itemsData={Object.values(itemsCache)} useType='fitForm-added'
                 itemClick={chooseItem} itemRemove={removeItem} 
               />
             </Paper>

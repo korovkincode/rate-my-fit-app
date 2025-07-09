@@ -17,14 +17,10 @@ import { North, South } from '@mui/icons-material';
 import { SnackbarStatus } from '../types/UI';
 import { Sort } from '../types/UI';
 import { Fit } from '../types/fit';
-import { Item } from '../types/item';
-import { UserPreview } from '../types/user';
 
-import { countPages } from '../utils';
+import { countPages, convertPfpList } from '../utils';
 
 import { getTotalFits, getAllFits } from '../API/fit';
-import { getItem } from '../API/item';
-import { getUser, getUserPfpDirect } from '../API/user';
 
 import Loader from '../components/UI/loader';
 import FitCard from '../components/FitCard';
@@ -47,6 +43,7 @@ const cardVariants = {
 };
 
 const Main = () => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
   const [_, setSnackbarStatus] = useState<SnackbarStatus>({
     open: false, message: '', color: 'info'
   });
@@ -72,25 +69,11 @@ const Main = () => {
   }, []);
 
   const [fitsData, setFitsData] = useState<Fit[] | null>(null);
-  const [itemsData, setItemsData] = useState<{
-    [itemID: string]: Item
-  } | null>(null);
-  const [fitItems, setFitItems] = useState<{
-    [fitID: string]: {
-      [itemID: string]: Item
-    }
-  } | null>(null);
-  const [authorsData, setAuthorsData] = useState<{
-    [userID: string]: UserPreview
-  } | null>(null);
   const [allDataLoaded, setAllDataLoaded] = useState<boolean>(false);
 
   useEffect(() => {
     setAllDataLoaded(false);
     setFitsData(null);
-    setItemsData(null);
-    setFitItems(null);
-    setAuthorsData(null);
 
     const fetchFits = async () => {
       const fitsRequest = await getAllFits(
@@ -103,52 +86,9 @@ const Main = () => {
         });
         throw new Error(fitsRequest.description);
       }
+
+      fitsRequest.data = convertPfpList(fitsRequest.data);
       setFitsData(fitsRequest.data);
-
-      const tempItemsData = {} as {
-        [itemID: string]: Item
-      };
-      const tempFitItems = {} as {
-        [fitID: string]: {
-          [itemID: string]: Item
-        }
-      };
-      for (const fitData of fitsRequest.data) {
-        tempFitItems[fitData.fitID] = {};
-        for (const itemID of fitData.itemsID) {
-          if (!(itemID in tempItemsData)) {  
-            const itemRequest = await getItem(itemID);
-            if (itemRequest.status !== 200) {
-              throw new Error(itemRequest.description);
-            }
-            tempItemsData[itemID] = itemRequest.data;
-          }
-          tempFitItems[fitData.fitID][itemID] = tempItemsData[itemID];
-        }
-      }
-      setItemsData(tempItemsData);
-      setFitItems(tempFitItems);
-
-      const tempAuthorsData = {} as { [userID: string]: UserPreview };
-      for (const fitData of fitsRequest.data) {
-        if (fitData.authorToken in tempAuthorsData) continue;
-        tempAuthorsData[fitData.authorToken] = await fetchAuthor(fitData.authorToken);
-      }
-      setAuthorsData(tempAuthorsData);
-    };
-
-    const fetchAuthor = async (authorToken: string) => {
-      const authorRequest = await getUser(authorToken, null);
-      if (authorRequest.status !== 200) {
-        setSnackbarStatus({
-          open: true, message: authorRequest.description, color: 'error'
-        });
-        throw new Error(authorRequest.description);
-      }
-      return {
-        username: authorRequest.data.username,
-        pfpLink: await getUserPfpDirect(authorToken)
-      };
     };
 
     fetchFits();
@@ -156,9 +96,9 @@ const Main = () => {
 
   useEffect(() => {
     setAllDataLoaded(
-      [totalFits, fitsData, itemsData, authorsData].every(el => el !== null)
+      [totalFits, fitsData].every(el => el !== null)
     );
-  }, [totalFits, fitsData, itemsData, authorsData]);
+  }, [totalFits, fitsData]);
 
   return (
     !allDataLoaded
@@ -191,7 +131,7 @@ const Main = () => {
           </IconButton>
         </Box>
         <Grid container spacing={2} sx={{ mt: 3 }}>
-          {fitsData && itemsData && fitItems && authorsData &&
+          {fitsData &&
             fitsData.map((fit, index) => (
               <Grid size={{ xs: 12, sm: 4 }} key={fit.fitID}>
                 <motion.div
@@ -202,8 +142,8 @@ const Main = () => {
                 >
                   <FitCard
                     fitData={fit}
-                    itemsData={fitItems[fit.fitID]}
-                    authorData={authorsData[fit.authorToken]}
+                    itemsData={fit.items}
+                    authorData={fit.author}
                   />
                 </motion.div>
               </Grid>

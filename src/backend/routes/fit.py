@@ -60,11 +60,12 @@ async def get_all_fits(
     limit: int,
     sorting: str,
     direction: Literal["ASC", "DSC"],
+    full: bool = False,
     service: FitService = Depends(get_service),
 ) -> dict:
     return {
         "message": "Successful retrieving",
-        "data": service.get_all(skip, limit, sorting, direction),
+        "data": service.get_all(skip, limit, sorting, direction, full),
     }
 
 

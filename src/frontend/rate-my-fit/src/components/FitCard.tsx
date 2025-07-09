@@ -26,9 +26,7 @@ import { BounceDown, Shake } from './UI/animations';
 
 interface FitCardProps {
   fitData: Fit,
-  itemsData: {
-    [itemID: string]: Item
-  },
+  itemsData: Item[]
   authorData: UserPreview
 };
 
