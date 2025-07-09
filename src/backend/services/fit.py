@@ -83,13 +83,16 @@ class FitService:
         except:
             raise HTTPException(status_code=500, detail="Could not update the fit")
 
-    def get_by_user(self, user_id: str) -> list[dict]:
+    def get_by_user(self, user_id: str, full: bool) -> list[dict]:
         author_token = id_to_token(user_id, self.dao)
 
         if not self.dao.users.count({"userToken": author_token}):
             raise HTTPException(status_code=401, detail="No such user")
 
-        return list(self.dao.fits.find_many({"authorToken": author_token}))
+        fits_data = list(self.dao.fits.find_many({"authorToken": author_token}))
+        if not full:
+            return fits_data
+        return self.convert_to_full(fits_data)
 
     def get_all(
         self,
@@ -103,11 +106,10 @@ class FitService:
 
         if not full:
             return fits_data
-
-        for fit_index in range(len(fits_data)):
-            fit_id = fits_data[fit_index]["fitID"]
-            fits_data[fit_index] = self.get(fit_id, True)
-        return fits_data
+        return self.convert_to_full(fits_data)
 
     def get_total(self) -> int:
         return self.dao.fits.count({})
+
+    def convert_to_full(self, fits: list[dict]) -> list[dict]:
+        return [self.get(fit["fitID"], True) for fit in fits]

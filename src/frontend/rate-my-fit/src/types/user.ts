@@ -17,7 +17,9 @@ export type User = {
 export type UserPreview = {
   username: string,
   bio: string,
-  pfpLink: string
+  pfpLink: string,
+  totalFits: number,
+  totalReviews: number
 };
 
 export type Form = {

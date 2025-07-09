@@ -31,7 +31,7 @@ export const updateFit = () => {
 export const getUserFits = async (userID: string) => {
   const response = await APICall({
     method: 'GET',
-    path: `/fit/by/${userID}`,
+    path: `/fit/by/${userID}?full=true`,
     headers: null,
     body: null,
     multipart: false

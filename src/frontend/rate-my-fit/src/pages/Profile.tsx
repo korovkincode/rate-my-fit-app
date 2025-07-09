@@ -13,14 +13,12 @@ import {
 } from '@mui/material';
 
 import { Fit } from '../types/fit';
-import { Item } from '../types/item';
-import { User } from '../types/user';
+import { UserPreview } from '../types/user';
 
-import { getPfpToken } from '../utils';
+import { getFullPfpPath, getPfpToken } from '../utils';
 
-import { getUser, getUserPfpDirect } from '../API/user';
+import { getUser } from '../API/user';
 import { getUserFits } from '../API/fit';
-import { getItem } from '../API/item';
 
 import { AuthContext } from '../context';
 
@@ -31,6 +29,7 @@ const Profile = () => {
   if (!authContext) {
     throw new Error('AuthContext is not defined');
   }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
   const [userCredentials, _] = authContext; 
 
   const [userDataLoaded, setUserDataLoaded] = useState(false);
@@ -42,20 +41,13 @@ const Profile = () => {
     throw new Error('User ID is not defined');
   }
 
-  const [userData, setUserData] = useState<User | null>(null);
-  const [pfpLink, setPfpLink] = useState<string | null>(null);
+  const [userData, setUserData] = useState<UserPreview | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
   const [__, setEditMode] = useState(false);
   const [userFits, setUserFits] = useState<Fit[] | null>(null);
-  const [itemsData, setItemsData] = useState<{
-    [itemID: string]: Item
-  } | null>(null);
-  const [usernamesData, setUsernamesData] = useState<{
-    [userID: string]: string
-  } | null>(null);
 
   useEffect(() => {
     setUserData(null);
-    setPfpLink(null);
     setUserFits(null);
 
     const fetchUser = async () => {
@@ -63,11 +55,9 @@ const Profile = () => {
       if (userRequest.status !== 200) {
         throw new Error(userRequest.description);
       }
+
+      userRequest.data.pfpLink = getFullPfpPath(userRequest.data.pfpLink);
       setUserData(userRequest.data);
-      setUsernamesData({
-        [userRequest.data.userToken]: userRequest.data.username
-      });
-      setPfpLink(await getUserPfpDirect(userID));
     };
 
     const fetchFits = async () => {
@@ -76,22 +66,7 @@ const Profile = () => {
         throw new Error(fitsRequest.description);
       }
       setUserFits(fitsRequest.data.reverse());
-      
-      const tempItemsData = {} as {
-        [itemID: string]: Item
-      };
-      for (const fit of fitsRequest.data) {
-        for (const itemID of fit.itemsID) {
-          if (itemID in tempItemsData) continue;
 
-          const itemRequest = await getItem(itemID);
-          if (itemRequest.status !== 200) {
-            throw new Error(itemRequest.description);
-          }
-          tempItemsData[itemID] = itemRequest.data;
-        }
-      }
-      setItemsData(tempItemsData);
     };
 
     fetchUser();
@@ -99,10 +74,10 @@ const Profile = () => {
   }, [userID, userCredentials]);
 
   useEffect(() => {
-    setUserDataLoaded(userData !== null && pfpLink !== null);
-    setEditMode(pfpLink !== null && userCredentials.userToken === getPfpToken(pfpLink));
-    setUserFitsLoaded(userFits !== null && itemsData !== null);
-  }, [userData, pfpLink, userFits, itemsData, usernamesData, userCredentials]);
+    setUserDataLoaded(userData !== null);
+    setEditMode(userData !== null && userCredentials.userToken === getPfpToken(userData.pfpLink));
+    setUserFitsLoaded(userFits !== null);
+  }, [userData, userFits, userCredentials]);
 
   return (
     <>
@@ -116,7 +91,7 @@ const Profile = () => {
             ?
             <Avatar
               alt={userData.username || ''}
-              src={pfpLink || ''}
+              src={userData.pfpLink || ''}
               sx={{ width: '140px', height: '140px' }}
             />
             :
@@ -153,15 +128,12 @@ const Profile = () => {
       <Container maxWidth="md">
         <Divider sx={{ mt: 6, borderBottomWidth: 3 }} />
         <Grid container spacing={2} sx={{ mt: 5 }}>
-          {userFitsLoaded && itemsData && usernamesData && (userFits?.length || 0) > 0
+          {userFitsLoaded && userData && (userFits?.length || 0) > 0
             ?   
             userFits?.map((fit, index) =>
               <Grid size={{ xs: 12, md: 4 }} key={index}>
                 <FitCard
-                  fitData={fit} itemsData={itemsData}
-                  authorData={{
-                    username: usernamesData[fit.authorToken], pfpLink: pfpLink || ''
-                  }}
+                  fitData={fit} itemsData={fit.items} authorData={userData}
                 />
               </Grid>
             )

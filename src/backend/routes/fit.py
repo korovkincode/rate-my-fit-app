@@ -49,9 +49,12 @@ async def update_fit(
 
 @router.get("/by/{user_id}", response_model=None)
 async def get_user_fits(
-    user_id: str, service: FitService = Depends(get_service)
+    user_id: str, full: bool = False, service: FitService = Depends(get_service)
 ) -> dict:
-    return {"message": "Successful retrieving", "data": service.get_by_user(user_id)}
+    return {
+        "message": "Successful retrieving",
+        "data": service.get_by_user(user_id, full),
+    }
 
 
 @router.get("/all/", response_model=None)
