@@ -150,18 +150,28 @@ const Fit = () => {
     } else {
       const review = reviewRequest.data as Review;
       const newReviewer = await getUser(userCredentials.userToken, null);
-      review.author = newReviewer;
+
+      newReviewer.data.pfpLink = getFullPfpPath(newReviewer.data.pfpLink);
+      review.author = newReviewer.data;
       
       if (reviewCommentEl.current) {
         reviewCommentEl.current.value = '';
       }
       setReviewGrade(null);
       setReviewsData([review, ...(reviewsData || [])]);
+      if (fitData && reviewsData) {
+        setFitData({
+          ...fitData,
+          avgGrade: (fitData.avgGrade * reviewsData.length + reviewGrade) / (reviewsData.length + 1)
+        });
+      }
       setSnackbarStatus({
         open: true, message: 'Successfully added the review', color: 'success'
       });
     }
   };
+
+  console.log(reviewsData);
 
   return (
     <>

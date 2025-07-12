@@ -5,6 +5,7 @@ from fastapi import HTTPException
 from dao.aggregator import DAO
 from services.helpers.user import id_to_token, get_public_data
 from services.helpers.review import get_fit_reviews
+from services.helpers.fit import update_fit_stats
 
 
 class ReviewService:
@@ -30,6 +31,7 @@ class ReviewService:
 
         try:
             self.dao.reviews.create_one(review_data.copy())
+            update_fit_stats(review_data["fitID"], self.dao)
             return review_data
         except:
             raise HTTPException(status_code=500, detail="Could not add a review")
@@ -56,4 +58,4 @@ class ReviewService:
             for review in reviews_data:
                 review["author"] = get_public_data(review["authorToken"], self.dao)
 
-        return reviews_data
+        return reviews_data[::-1]
