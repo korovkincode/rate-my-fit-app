@@ -99,3 +99,9 @@ export const convertPfpList = (entities: EntityWithAuthor[]) => {
   }
   return entities;
 };
+
+export const getNewAvg = (
+  currentAvg: number, itemsNumber: number, newItem: number
+) => {
+  return (currentAvg * itemsNumber + newItem) / (itemsNumber + 1);
+};

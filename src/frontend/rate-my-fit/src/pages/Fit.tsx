@@ -26,7 +26,7 @@ import type { Item } from '../types/item';
 import type { Review } from '../types/review';
 import type { SnackbarStatus } from '../types/UI';
 
-import { formatDate, getTodayDate, failedRequest, convertPfpList, getFullPfpPath } from '../utils';
+import { formatDate, getTodayDate, failedRequest, convertPfpList, getFullPfpPath, getNewAvg } from '../utils';
 
 import { API_URL } from '../API/API';
 import { getFit } from '../API/fit';
@@ -162,7 +162,7 @@ const Fit = () => {
       if (fitData && reviewsData) {
         setFitData({
           ...fitData,
-          avgGrade: (fitData.avgGrade * reviewsData.length + reviewGrade) / (reviewsData.length + 1)
+          avgGrade: getNewAvg(fitData.avgGrade, reviewsData.length, reviewGrade)
         });
       }
       setSnackbarStatus({
@@ -170,8 +170,6 @@ const Fit = () => {
       });
     }
   };
-
-  console.log(reviewsData);
 
   return (
     <>
